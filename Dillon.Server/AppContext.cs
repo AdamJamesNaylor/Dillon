@@ -7,7 +7,9 @@ namespace Dillon.Server {
     using WindowsInput;
     using Autofac;
     using Autofac.Integration.WebApi;
+    using Microsoft.Owin.FileSystems;
     using Microsoft.Owin.Hosting;
+    using Microsoft.Owin.StaticFiles;
     using NLog;
     using Owin;
 
@@ -76,6 +78,11 @@ namespace Dillon.Server {
             appBuilder.UseAutofacMiddleware(container);
             appBuilder.UseAutofacWebApi(config);
             appBuilder.UseWebApi(config);
+            var fileSystem = new PhysicalFileSystem(".");
+
+            var options = new FileServerOptions { FileSystem = fileSystem };
+
+            appBuilder.UseFileServer(options);
         }
 
         private void Terminate() {
