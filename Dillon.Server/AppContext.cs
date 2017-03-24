@@ -1,21 +1,29 @@
 namespace Dillon.Server {
     using System;
     using System.Drawing;
+    using System.Reflection;
+    using System.Web.Http;
     using System.Windows.Forms;
-    using JsonConfig;
+    using WindowsInput;
+    using Autofac;
+    using Autofac.Integration.WebApi;
     using Microsoft.Owin.Hosting;
+    using NLog;
+    using Owin;
+
 
     public class AppContext
         : ApplicationContext {
+        private readonly Configuration _config;
 
-        public AppContext() {
+        public AppContext(Configuration config) {
+            _config = config;
             Application.ApplicationExit += OnApplicationExit;
-            InitializeComponent();
-            _trayIcon.Visible = true;
+            Initialise();
         }
 
-        private void InitializeComponent()
-        {
+        private void Initialise() {
+
             _trayIcon = new NotifyIcon {
                 BalloonTipIcon = ToolTipIcon.Info,
                 BalloonTipText = "I noticed that you double-clicked me! What can I do for you?",
@@ -42,27 +50,54 @@ namespace Dillon.Server {
             _trayIconContextMenu.ResumeLayout(false);
             _trayIcon.ContextMenuStrip = _trayIconContextMenu;
 
-            WebApp.Start<Startup>($"{Config.Global.Scheme}://{Config.Global.Domain}:{Config.Global.Port}");
+            var log = LogManager.GetCurrentClassLogger();
+            string url = $"{_config.Scheme}://{_config.Domain}:{_config.Port}";
+            log.Debug($"Starting webserver listening on {url}");
+            WebApp.Start(url, Startup);
+
+            _trayIcon.Visible = true;
         }
 
-        private void OnApplicationExit(object sender, EventArgs e)
-        {
-            //Cleanup so that the icon will be removed when the application is closed
-            _trayIcon.Visible = false;
+        private void Startup(IAppBuilder appBuilder) {
+            var config = new HttpConfiguration();
+
+            config.MapHttpAttributeRoutes();
+
+            var builder = new ContainerBuilder();
+
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+
+            builder.RegisterInstance(_config).As<IConfiguration>();
+            builder.RegisterType<InputSimulator>().As<IInputSimulator>();
+
+            var container = builder.Build();
+            config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
+
+            appBuilder.UseAutofacMiddleware(container);
+            appBuilder.UseAutofacWebApi(config);
+            appBuilder.UseWebApi(config);
         }
 
-        private void TrayIcon_DoubleClick(object sender, EventArgs e)
-        {
+        private void Terminate() {
+            if (_trayIcon != null)
+                _trayIcon.Visible = false;
+
+            Application.Exit();
+        }
+
+        private void OnApplicationExit(object sender, EventArgs e) {
+            Terminate();
+        }
+
+        private void TrayIcon_DoubleClick(object sender, EventArgs e) {
             //Here you can do stuff if the tray icon is doubleclicked
             _trayIcon.ShowBalloonTip(10000);
         }
 
-        private void CloseMenuItem_Click(object sender, EventArgs e)
-        {
+        private void CloseMenuItem_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Do you really want to close me?",
                 "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2) == DialogResult.Yes)
-            {
+                MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
                 Application.Exit();
             }
         }
