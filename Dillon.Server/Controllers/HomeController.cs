@@ -23,7 +23,6 @@ namespace Dillon.Server.Controllers {
     public class HomeController
         : ApiController {
 
-
         public HomeController(IConfiguration config, IInputSimulator inputSimulator, IInputCache inputCache) {
             _config = config;
             _inputSimulator = inputSimulator;
@@ -32,11 +31,20 @@ namespace Dillon.Server.Controllers {
 
         [HttpGet]
         [Route]
-        public async Task<HttpResponseMessage> Index() {
+        public async Task<HttpResponseMessage> Index(string ui = "") {
+            if (string.IsNullOrEmpty(ui))
+                ui = _config.UI;
             //check configured ui exists. Maybe during startup and switch?
-            var path = Path.Combine(_config.UIFolder, $"{_config.UI}\\index.html");
+            var path = Path.Combine(_config.UIFolder, $"{ui}\\index.html");
+            if (!File.Exists(path))
+                return new HttpResponseMessage(HttpStatusCode.NotFound);
+
             var response = new HttpResponseMessage(HttpStatusCode.OK);
-            response.Content = new StringContent(File.ReadAllText(path));
+            try {
+                response.Content = new StringContent(File.ReadAllText(path));
+            } catch (Exception e) {
+                throw new Exception($"There was a problem reading the HTML for the UI '{ui}'", e);
+            }
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
             return response;
         }
@@ -44,7 +52,7 @@ namespace Dillon.Server.Controllers {
         [HttpGet]
         [Route]
         public async Task<IHttpActionResult> Index(int id, string value = "") {
-            var mapping = _config.Mappings[id];
+            //var mapping = _config.Mappings[id];
             //var keyCode = ConvertToKeyCode(mapping);
             //_inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
             int amount = Convert.ToInt32(value);

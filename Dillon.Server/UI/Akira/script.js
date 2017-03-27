@@ -57,6 +57,8 @@ function update(ul, e) {
 }
 
 $(document).ready(function () {
+    $("body").requestFullscreen();
+
     update($('ul'), { pageY: 1120});
 
     init();
