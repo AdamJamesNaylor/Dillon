@@ -1,5 +1,6 @@
 ﻿
 namespace Dillon.Server.Controllers {
+    using System;
     using System.IO;
     using System.Net;
     using System.Net.Http;
@@ -9,13 +10,24 @@ namespace Dillon.Server.Controllers {
     using WindowsInput;
     using WindowsInput.Native;
 
+    public class InputCache
+        : IInputCache {
+        public int Cache { get; set; }
+    }
+
+    public interface IInputCache {
+        int Cache { get; set; }
+    }
+
     [RoutePrefix("")]
     public class HomeController
         : ApiController {
 
-        public HomeController(IConfiguration config, IInputSimulator inputSimulator) {
+
+        public HomeController(IConfiguration config, IInputSimulator inputSimulator, IInputCache inputCache) {
             _config = config;
             _inputSimulator = inputSimulator;
+            _inputCache = inputCache;
         }
 
         [HttpGet]
@@ -33,9 +45,13 @@ namespace Dillon.Server.Controllers {
         [Route]
         public async Task<IHttpActionResult> Index(int id, string value = "") {
             var mapping = _config.Mappings[id];
-            var keyCode = ConvertToKeyCode(mapping);
-            _inputSimulator.Keyboard.KeyDown(keyCode);
-
+            //var keyCode = ConvertToKeyCode(mapping);
+            //_inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
+            int amount = Convert.ToInt32(value);
+            amount -= _inputCache.Cache;
+            _inputCache.Cache += amount;
+            //_inputSimulator.Mouse.MoveMouseBy(0, amount);
+            _inputSimulator.Mouse.VerticalScroll(amount);
             return Ok();
         }
 
@@ -45,5 +61,7 @@ namespace Dillon.Server.Controllers {
 
         private readonly IConfiguration _config;
         private readonly IInputSimulator _inputSimulator;
+        private readonly IInputCache _inputCache;
+
     }
 }

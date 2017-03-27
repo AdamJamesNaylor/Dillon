@@ -7,6 +7,7 @@ namespace Dillon.Server {
     using WindowsInput;
     using Autofac;
     using Autofac.Integration.WebApi;
+    using Controllers;
     using Microsoft.Owin.FileSystems;
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.StaticFiles;
@@ -69,8 +70,10 @@ namespace Dillon.Server {
 
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
+            var inputCache = new InputCache();
             builder.RegisterInstance(_config).As<IConfiguration>();
             builder.RegisterType<InputSimulator>().As<IInputSimulator>();
+            builder.RegisterInstance(inputCache).As<IInputCache>();
 
             var container = builder.Build();
             config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
@@ -78,7 +81,7 @@ namespace Dillon.Server {
             appBuilder.UseAutofacMiddleware(container);
             appBuilder.UseAutofacWebApi(config);
             appBuilder.UseWebApi(config);
-            var fileSystem = new PhysicalFileSystem(".");
+            var fileSystem = new PhysicalFileSystem(_config.UIFolder);
 
             var options = new FileServerOptions { FileSystem = fileSystem };
 
@@ -102,11 +105,7 @@ namespace Dillon.Server {
         }
 
         private void CloseMenuItem_Click(object sender, EventArgs e) {
-            if (MessageBox.Show("Do you really want to close me?",
-                "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation,
-                MessageBoxDefaultButton.Button2) == DialogResult.Yes) {
-                Application.Exit();
-            }
+            Terminate();
         }
 
         private NotifyIcon _trayIcon;
