@@ -12,11 +12,11 @@ namespace Dillon.Server.Controllers {
 
     public class InputCache
         : IInputCache {
-        public int Cache { get; set; }
+        public double Cache { get; set; }
     }
 
     public interface IInputCache {
-        int Cache { get; set; }
+        double Cache { get; set; }
     }
 
     [RoutePrefix("")]
@@ -55,11 +55,11 @@ namespace Dillon.Server.Controllers {
             //var mapping = _config.Mappings[id];
             //var keyCode = ConvertToKeyCode(mapping);
             //_inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
-            int amount = Convert.ToInt32(value);
+            double amount = Convert.ToDouble(value);
             amount -= _inputCache.Cache;
             _inputCache.Cache += amount;
             //_inputSimulator.Mouse.MoveMouseBy(0, amount);
-            _inputSimulator.Mouse.VerticalScroll(amount);
+            _inputSimulator.Mouse.VerticalScroll((int)amount);
             return Ok();
         }
 
