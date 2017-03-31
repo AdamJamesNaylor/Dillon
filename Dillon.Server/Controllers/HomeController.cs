@@ -9,6 +9,7 @@ namespace Dillon.Server.Controllers {
     using System.Web.Http;
     using WindowsInput;
     using WindowsInput.Native;
+    using NLog;
 
     public class InputCache
         : IInputCache {
@@ -17,6 +18,11 @@ namespace Dillon.Server.Controllers {
 
     public interface IInputCache {
         double Cache { get; set; }
+    }
+
+    public class Update {
+        public int Id { get; set; }
+        public string Value { get; set; }
     }
 
     [RoutePrefix("")]
@@ -50,17 +56,20 @@ namespace Dillon.Server.Controllers {
         }
 
         [HttpGet]
-        [Route]
-        public async Task<IHttpActionResult> Index(int id, string value = "") {
+        [Route("update")]
+        public async Task<IHttpActionResult> Update([FromUri] Update[] updates) {
+            //_log.Trace($"[UPDATE] {id}: {value}");
             //var mapping = _config.Mappings[id];
             //var keyCode = ConvertToKeyCode(mapping);
             //_inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
-            double amount = Convert.ToDouble(value);
-            amount -= _inputCache.Cache;
-            _inputCache.Cache += amount;
-            //_inputSimulator.Mouse.MoveMouseBy(0, amount);
-            _inputSimulator.Mouse.VerticalScroll((int)amount);
-            return Ok();
+            foreach (var update in updates) {
+                double amount = Convert.ToDouble(update.Value);
+                amount -= _inputCache.Cache;
+                _inputCache.Cache += amount;
+                //_inputSimulator.Mouse.MoveMouseBy(0, amount);
+                _inputSimulator.Mouse.VerticalScroll((int) amount);
+            }
+            return Ok(updates.Length);
         }
 
         private VirtualKeyCode ConvertToKeyCode(int value) {
@@ -70,6 +79,6 @@ namespace Dillon.Server.Controllers {
         private readonly IConfiguration _config;
         private readonly IInputSimulator _inputSimulator;
         private readonly IInputCache _inputCache;
-
+        private Logger _log = NLog.LogManager.GetCurrentClassLogger();
     }
 }
