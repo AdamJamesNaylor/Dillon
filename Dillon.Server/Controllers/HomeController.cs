@@ -22,7 +22,8 @@ namespace Dillon.Server.Controllers {
 
     public class Update {
         public int Id { get; set; }
-        public string Value { get; set; }
+        public string X { get; set; }
+        public string Y { get; set; }
     }
 
     [RoutePrefix("")]
@@ -58,16 +59,21 @@ namespace Dillon.Server.Controllers {
         [HttpGet]
         [Route("update")]
         public async Task<IHttpActionResult> Update([FromUri] Update[] updates) {
-            //_log.Trace($"[UPDATE] {id}: {value}");
-            //var mapping = _config.Mappings[id];
-            //var keyCode = ConvertToKeyCode(mapping);
-            //_inputSimulator.Keyboard.KeyDown(VirtualKeyCode.F11);
+
             foreach (var update in updates) {
-                double amount = Convert.ToDouble(update.Value);
-                amount -= _inputCache.Cache;
-                _inputCache.Cache += amount;
-                //_inputSimulator.Mouse.MoveMouseBy(0, amount);
-                _inputSimulator.Mouse.VerticalScroll((int) amount);
+                _log.Trace($"[UPDATE] {update.Id}: {update.Y}");
+
+                if (_config.Mappings.ContainsKey(update.Id)) {
+                    var mapping = _config.Mappings[update.Id];
+                    var keyCode = ConvertToKeyCode(mapping);
+                    _inputSimulator.Keyboard.KeyPress(keyCode);
+                    _log.Trace($"Raised KeyPress for key code {keyCode}");
+                } else {
+                    double amount = Convert.ToDouble(update.Y);
+                    amount -= _inputCache.Cache;
+                    _inputCache.Cache += amount;
+                    _inputSimulator.Mouse.VerticalScroll((int) amount);
+                }
             }
             return Ok(updates.Length);
         }
@@ -79,6 +85,6 @@ namespace Dillon.Server.Controllers {
         private readonly IConfiguration _config;
         private readonly IInputSimulator _inputSimulator;
         private readonly IInputCache _inputCache;
-        private Logger _log = NLog.LogManager.GetCurrentClassLogger();
+        private Logger _log = LogManager.GetCurrentClassLogger();
     }
 }

@@ -3,9 +3,16 @@
 function calculateValue(element, pageX, pageY) {
     //todo check class for orientation, assume vertical for now
     element = $(element);
+
     var height = element.outerHeight();
-    var value = height - (pageY - element.offset().top);
-    return value.clamp(0, height);
+    var y = height - (pageY - element.offset().top);
+    y = y.clamp(0, height);
+
+    var width = element.outerWidth();
+    var x = width - (pageX - element.offset().left);
+    x = x.clamp(0, width);
+
+    return { x: x, y: y }
 }
 
 function submitValue(id, value) {
@@ -25,15 +32,22 @@ function submitValue(id, value) {
     });
 }
 
-function updateElement(element, value) {
+function updateElement(element, x, y) {
     //todo check element type and class for orientation, assume vertical UL for now
-    updateVerticalUL(element, value);
+    switch (element.tagName) {
+        case "BUTTON":
+
+            break;
+        case "UL":
+            updateVerticalUL(element, y);
+            break;
+    }
 }
 
-function updateVerticalUL(ul, value) {
+function updateVerticalUL(ul, y) {
     ul = $(ul);
     var height = ul.outerHeight();
-    var percent = Math.floor((value / height) * 100);
+    var percent = Math.floor((y / height) * 100);
     var tenth = Math.ceil(percent / 10);
 
     var items = ul.children("li");
@@ -49,20 +63,22 @@ function updateVerticalUL(ul, value) {
     $("h1").text(percent);
 }
 
-function enqueueUpdate(id, value) {
+function enqueueUpdate(id, x, y) {
     var lastUpdate = updatesQueue[updatesQueue.length - 1];
-    if (lastUpdate && lastUpdate.id === id && lastUpdate.value === value)
+    if (lastUpdate && lastUpdate.id === id && lastUpdate.x === x && lastUpdate.y === y) {
+        console.warn("skipping update due to duplication. Id: " + id + " " + x + "," + y + " queue length: " + updatesQueue.length);
         return;
+    }
 
-    console.log("Adding value " + value + " to queue.");
-    updatesQueue.push({ id: id, value: value });
+    console.log("Queued id: " + id + " x: " + x + " y: " + y);
+    updatesQueue.push({ id: id, x: x, y: y });
 }
 
 function flushUpdatesQueue(queue) {
     if (queue.length <= 0)
         return;
 
-    console.log("Flushing queue...");
+    console.groupCollapsed("Flushing queue");
 
     var MAX_QUEUE_LENGTH = 20;
     var batchSize = queue.length;
@@ -72,7 +88,7 @@ function flushUpdatesQueue(queue) {
     var updates = "";
     for (var i = 0; i < batchSize; ++i) {
         var item = "updates[" + i + "]";
-        updates += item + "[id]=" + queue[i].id + "&" + item + "[value]=" + queue[i].value + "&";
+        updates += item + "[id]=" + queue[i].id + "&" + item + "[x]=" + queue[i].x + "&" + item + "[y]=" + queue[i].y + "&";
     }
     queue.splice(0, batchSize); //new updates could have been added so only remove the batch we just processed
     updates = updates.slice(0, -1);
@@ -90,30 +106,38 @@ function flushUpdatesQueue(queue) {
     .fail(function (msg) {
         console.error(msg);
     });
+    console.groupEnd();
 }
 
 function respondToEvent(element, x, y) {
-    var value = calculateValue(element, x, y);
-    enqueueUpdate(1, value); //todo pull id from data attribute
-    //submitValue(1, value);
-    updateElement(element, value);
+    var coords = calculateValue(element, x, y);
+    var id = $(element).data("id");
+    enqueueUpdate(id, coords.x, coords.y); //todo pull id from data attribute
+    updateElement(element, coords.x, coords.y);
 
-    return value;
+    return coords;
 }
 
 var ongoingTouches = [];
 
 function initEvents() {
-    var elements = document.getElementsByTagName("ul");
-    for (var i = 0; i < elements.length; ++i) {
-        elements[i].addEventListener("touchstart", handleStart, false);
-        elements[i].addEventListener("touchmove", handleMove, false);
-        elements[i].addEventListener("touchcancel", handleCancel, false);
-        elements[i].addEventListener("touchend", handleEnd, false);
-
-        elements[i].addEventListener("mousedown", handleMouseDown, false);
-        elements[i].addEventListener("mousemove", handleMouseMove, false);
+    var sliders = document.getElementsByTagName("ul");
+    var buttons = document.getElementsByTagName("button");
+    for (var i = 0; i < sliders.length; ++i) {
+        sliders[i].addEventListener("touchstart", handleStart, false);
+        sliders[i].addEventListener("touchmove", handleMove, false);
+        sliders[i].addEventListener("touchcancel", handleCancel, false);
+        sliders[i].addEventListener("touchend", handleEnd, false);
+        
+        sliders[i].addEventListener("mousedown", handleMouseDown, false);
+        sliders[i].addEventListener("mousemove", handleMouseMove, false);
     }
+
+    for (var i = 0; i < buttons.length; ++i) {
+        sliders[i].addEventListener("touchstart", handleStart, false);
+        buttons[i].addEventListener("mousedown", handleMouseDown, false);
+    }
+
     document.getElementsByTagName("body")[0].addEventListener("mouseup", handleMouseUp, false);
 }
 
@@ -180,7 +204,7 @@ function handleEnd(e) {
 var down = false;
 
 function handleMouseDown(e) {
-    console.groupCollapsed("mousedown");
+    console.groupCollapsed("mousedown on element " + this + " with id: " + $(this).data("id"));
     down = true;
     respondToEvent(this, e.pageX, e.pageY);
 }
@@ -196,7 +220,20 @@ function handleMouseUp(e) {
     console.groupEnd();
 }
 
+function printDiagnostics() {
+    console.log("    _____  _ _ _             ");
+    console.log("   |  __ \\(_) | |            ");
+    console.log("   | |  | |_| | | ___  _ __  ");
+    console.log("   | |  | | | | |/ _ \\| '_ \\ ");
+    console.log("   | |__| | | | | (_) | | | |");
+    console.log("   |_____/|_|_|_|\\___/|_| |_|");
+    console.log("---------------------------------");
+    console.log(navigator.appVersion);
+}
+
 $(document).ready(function () {
+    printDiagnostics();
+
     updateVerticalUL($('ul'), 0);
     initEvents();
 
