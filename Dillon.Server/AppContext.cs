@@ -59,6 +59,8 @@ namespace Dillon.Server {
             WebApp.Start(url, Startup);
 
             _trayIcon.Visible = true;
+            _trayIcon.ShowBalloonTip(10000, "Dillon server", "The Dillon server is now listening on port " + _config.Port, ToolTipIcon.Info);
+
         }
 
         private void Startup(IAppBuilder appBuilder) {

@@ -134,7 +134,7 @@ function initEvents() {
     }
 
     for (var i = 0; i < buttons.length; ++i) {
-        sliders[i].addEventListener("touchstart", handleStart, false);
+        buttons[i].addEventListener("touchstart", handleStart, false);
         buttons[i].addEventListener("mousedown", handleMouseDown, false);
     }
 

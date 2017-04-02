@@ -119,3 +119,15 @@ body:-ms-fullscreen {
 body:fullscreen {
   width: 100% !important;
 }
+
+div.slider {
+    border: 2px solid #33ffa5;
+    border-radius: 13px;
+    height: 200px;
+    width: 200px;
+}
+
+ .power-distro {
+     width: 60px;
+     text-align: center;
+ }
