@@ -53,10 +53,10 @@ namespace Dillon.Server {
             }
 
             foreach (var mapping in mappings) {
-                string type = mapping.type.ToString();
-                switch (type) {
+                //string type = mapping.type.ToString();
+                //switch (type) {
                     //todo add a plugin mapping factory that gives each mapping a chance to be created with the correct dependancies.
-                }
+                //}
                 config.Mappings.Add(mapping.id, mapping.keyCode);
             }
         }
