@@ -34,6 +34,12 @@ h1 {
 }
 
 h2 {
+    font-size: 46px;
+    font-weight: normal;
+    margin: 0;
+}
+
+h3 {
     font-size: 22px;
     font-weight: normal;
     margin: 0;
@@ -43,6 +49,14 @@ section {
     border: 2px solid #0d3a26;
     border-radius: 5px;
     padding: 10px;
+    display: inline-block;
+    float: left;
+    margin: 5px;
+}
+
+section.danger {
+    border: 2px dashed red;
+    color: red;
 }
 
 li {
@@ -88,6 +102,13 @@ button {
     font-size: 36px;
 }
 
+button.danger {
+    background-color: red;
+}
+button.danger div div:active {
+    background-color: maroon;
+}
+
 button div div:active {
     background-color: #0d3a26;
 }
@@ -105,6 +126,13 @@ button div div {
     height: 42px;
     border-radius: 27px;
     border: 1px solid #0d3a26;
+}
+
+button.danger div div {
+    width: 42px;
+    height: 42px;
+    border-radius: 27px;
+    border: 1px solid maroon;
 }
 
 body:-webkit-full-screen {
@@ -127,7 +155,7 @@ div.slider {
     width: 200px;
 }
 
- .power-distro {
-     width: 60px;
-     text-align: center;
- }
+.power-distro {
+    width: 100px;
+    text-align: center;
+}

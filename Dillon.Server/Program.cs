@@ -20,6 +20,8 @@ namespace Dillon.Server {
             var config = new Configuration();
             ApplyCommandArguments(args, config);
 
+            //plugins
+
             if (!TryParseConfiguration(config))
                 return 1;
 

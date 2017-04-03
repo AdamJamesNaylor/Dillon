@@ -1,4 +1,5 @@
 namespace Dillon.Server {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using JsonConfig;
@@ -52,11 +53,46 @@ namespace Dillon.Server {
             }
 
             foreach (var mapping in mappings) {
+                string type = mapping.type.ToString();
+                switch (type) {
+                    //todo add a plugin mapping factory that gives each mapping a chance to be created with the correct dependancies.
+                }
                 config.Mappings.Add(mapping.id, mapping.keyCode);
             }
         }
     }
 
-    
+    public abstract class Mapping {
+        public int Id { get; set; }
+
+        public abstract void Execute();
+    }
+
+    public class Binding
+        : Mapping {
+        public int KeyCode { get; set; }
+
+        public override void Execute() {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class Macro 
+        : Mapping {
+        public IEnumerable<int> KeyCodes { get; set; }
+
+        public override void Execute() {
+            throw new NotImplementedException();
+        }
+    }
+
+    //todo plugins
+    /*
+     during app startup the plugin directory is scanned.
+     Each plugin found should have a startup/registry class that get's registered with the app's startup code
+     during configuration this code is then used to create each mapping that is found for that plugin
+     - this means I'll need a way to query something by mapping type which in turns finds the right factory for that type
+     this code then returns a mapping object created with the right dependancies
+     */
 
 }

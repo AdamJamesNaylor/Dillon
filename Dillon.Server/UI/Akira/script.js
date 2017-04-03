@@ -60,7 +60,8 @@ function updateVerticalUL(ul, y) {
         $(items[i]).addClass("disabled");
     }
 
-    $("h1").text(percent);
+    var id = ul.data("id");
+    $("h1[data-id='" + id + "'").text(percent);
 }
 
 function enqueueUpdate(id, x, y) {
