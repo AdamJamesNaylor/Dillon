@@ -121,6 +121,8 @@
     <Compile Include="AppContext.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Input\KeyboardSimulatorAdapter.cs" />
+    <Compile Include="Mappings\KeyCodeMapping.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -202,8 +204,16 @@
     <None Include="Resources\TrayIcon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Plugins\" />
+    <ProjectReference Include="..\Dillon.Common\Dillon.Common.csproj">
+      <Project>{F63986A2-503C-4117-9034-758C13CC100B}</Project>
+      <Name>Dillon.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dillon.PluginAPI\Dillon.PluginAPI.csproj">
+      <Project>{03b89fcb-2906-42dd-be59-f6d1c69d2d52}</Project>
+      <Name>Dillon.PluginAPI</Name>
+    </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

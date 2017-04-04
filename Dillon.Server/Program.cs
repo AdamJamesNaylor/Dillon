@@ -12,20 +12,29 @@ namespace Dillon.Server {
 
         [STAThread]
         private static int Main(string[] args) {
-            _log = LogManager.GetCurrentClassLogger();
-            _log.Info($"======== Dillon.Server startup v{Assembly.GetExecutingAssembly().GetName().Version}");
-            foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
-                _log.Debug(e.Key + ":" + e.Value);
+            try
+            {
+                var config = new Configuration();
 
-            var config = new Configuration();
-            ApplyCommandArguments(args, config);
+                _log = LogManager.GetCurrentClassLogger();
+                _log.Info($"======== Dillon.Server startup v{Assembly.GetExecutingAssembly().GetName().Version}");
+                foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
+                    _log.Debug(e.Key + ":" + e.Value);
 
-            //plugins
+                ApplyCommandArguments(args, config);
 
-            if (!TryParseConfiguration(config))
-                return 1;
+                //plugins
 
-            return RunApplication(config);
+                if (!TryParseConfiguration(config))
+                    return 1;
+
+                return RunApplication(config);
+            }
+            catch (Exception e)
+            {
+                HandleException(e, "An exception occured whilst running the application. Check the log file for further information.");
+                return 2;
+            }
         }
 
         private static void ApplyCommandArguments(string[] args, Configuration config) {
@@ -49,19 +58,11 @@ namespace Dillon.Server {
         }
 
         private static int RunApplication(Configuration config) {
-            try {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new AppContext(config));
-                _log.Info("======== Dillon.Server shutdown");
-            }
-            catch (Exception e) {
-                _log.Error(e);
-                MessageBox.Show(
-                    $"An exception occured whilst running the application. Check the log file for further information.\n{e.Message}",
-                    "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 2;
-            }
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new AppContext(config));
+            _log.Info("======== Dillon.Server shutdown");
+
             return 0;
         }
 
@@ -71,13 +72,17 @@ namespace Dillon.Server {
                 return true;
             }
             catch (TypeInitializationException e) {
-                _log.Error(e);
-                var message = e.InnerException?.Message ?? e.Message;
-                MessageBox.Show(
-                    $"An exception occured trying to parse one or more of the configuration files.\n{message}",
-                    "Exception parsing configuration file(s).", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                HandleException(e, "An exception occured trying to parse one or more of the configuration files.");
                 return false;
             }
+        }
+
+        private static void HandleException(Exception e, string message) {
+            _log.Error(e);
+            var exceptionMessage = e.Message; //maybe get innermost exception?
+            MessageBox.Show(
+                $"{message}\n\n{exceptionMessage}",
+                "An exception occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
