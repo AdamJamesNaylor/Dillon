@@ -159,3 +159,16 @@ div.slider {
     width: 100px;
     text-align: center;
 }
+
+.dualAxis {
+    border: 2px solid #33ffa5;
+    width: 200px;
+    height: 200px;
+    border-radius: 15px;
+
+}
+
+.grid{
+    background-image: repeating-linear-gradient(0deg,transparent,transparent 50px,#0d3a26 50px,#0d3a26 51px),repeating-linear-gradient(-90deg,transparent,transparent 50px,#0d3a26 50px,#0d3a26 51px);
+    background-size: 51px 51px;
+}

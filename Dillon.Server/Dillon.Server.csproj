@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -120,9 +121,14 @@
   <ItemGroup>
     <Compile Include="AppContext.cs" />
     <Compile Include="Configuration.cs" />
+    <Compile Include="Configurator.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Diagnostics\LoggerAdapter.cs" />
     <Compile Include="Input\KeyboardSimulatorAdapter.cs" />
+    <Compile Include="Mappings\CoreMappingFactory.cs" />
     <Compile Include="Mappings\KeyCodeMapping.cs" />
+    <Compile Include="Mappings\KeyCodesMapping.cs" />
+    <Compile Include="Mappings\TextEntryMapping.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources.Designer.cs">
@@ -173,6 +179,7 @@
     <EmbeddedResource Include="Resources\default.conf" />
     <Content Include="NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </Content>
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>
@@ -207,6 +214,10 @@
     <ProjectReference Include="..\Dillon.Common\Dillon.Common.csproj">
       <Project>{F63986A2-503C-4117-9034-758C13CC100B}</Project>
       <Name>Dillon.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Dillon.Plugin.vJoy\Dillon.Plugin.vJoy.csproj">
+      <Project>{aad0212c-dfc9-4204-b34f-4cb56b2e68ff}</Project>
+      <Name>Dillon.Plugin.vJoy</Name>
     </ProjectReference>
     <ProjectReference Include="..\Dillon.PluginAPI\Dillon.PluginAPI.csproj">
       <Project>{03b89fcb-2906-42dd-be59-f6d1c69d2d52}</Project>

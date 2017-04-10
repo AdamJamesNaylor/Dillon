@@ -7,15 +7,16 @@
     public class PlaySoundEffectMappingFactory
         : IMappingFactory {
 
-        public IEnumerable<string> SupportedMappings = new List<string> { PlaySoundEffectMapping.Name };
+        public IEnumerable<string> SupportedMappings = new List<string> {PlaySoundEffectMapping.Name};
 
         public void RegisterDependancy<T>(T dependancy) {
-            if (dependancy is IKeyboardSimulator) {
-                _keyboardSimulator = (IKeyboardSimulator)dependancy;
+            var simulator = dependancy as IKeyboardSimulator;
+            if (simulator != null) {
+                _keyboardSimulator = simulator;
             }
         }
 
-        public IMapping Create(string name) {
+        public IMapping Create(string name, IDictionary<string, object> mapping) {
             var type = SupportedMappings.FirstOrDefault(t => t == name);
             if (type == null)
                 throw new NotSupportedException($"Mappings of type {name} are not supported by this factory.");
@@ -29,14 +30,13 @@
         private IKeyboardSimulator _keyboardSimulator = null;
     }
 
-    public interface IMappingFactory
-    {
+    public interface IMappingFactory {
         void RegisterDependancy<T>(T dependancy);
-        IMapping Create(string name);
+        IMapping Create(string name, IDictionary<string, object> map);
     }
 
-    public interface IMapping
-    {
+    public interface IMapping {
+        void Execute(Update update);
     }
 
     public class PlaySoundEffectMapping
@@ -44,9 +44,12 @@
 
         public static string Name => "sfx";
 
-        public PlaySoundEffectMapping()
-        {
+        public PlaySoundEffectMapping() {
 
+        }
+
+        public void Execute(Update update) {
+            throw new NotImplementedException();
         }
     }
 

@@ -1,21 +1,22 @@
 ﻿
 using Dillon.Common;
 
-namespace Dillon.Server.Mappings
-{
+namespace Dillon.Server.Mappings {
+    using Controllers;
+    using PluginAPI.V1;
+
     public class KeyCodeMapping
-    {
-        public KeyCodeMapping(IKeyboardSimulator keyboard, VirtualKeyCode keyCode)
-        {
+        : IMapping {
+        public KeyCodeMapping(IKeyboardSimulator keyboard, VirtualKeyCode keyCode) {
             _keyboard = keyboard;
+            _keyCode = keyCode;
         }
 
-        public void Execute()
-        {
+        public void Execute(Update update) {
             _keyboard.KeyPress(_keyCode);
         }
 
-        private VirtualKeyCode _keyCode;
-        private IKeyboardSimulator _keyboard;
+        private readonly VirtualKeyCode _keyCode;
+        private readonly IKeyboardSimulator _keyboard;
     }
 }

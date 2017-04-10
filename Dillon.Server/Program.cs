@@ -2,59 +2,40 @@
 namespace Dillon.Server {
     using System;
     using System.Collections;
-    using System.IO;
     using System.Reflection;
     using System.Windows.Forms;
+    using WindowsInput;
+    using Common;
     using NLog;
+    using Input;
+    using Mappings;
 
     internal static class Program {
         private static Logger _log;
 
         [STAThread]
         private static int Main(string[] args) {
-            try
-            {
-                var config = new Configuration();
+            try {
 
                 _log = LogManager.GetCurrentClassLogger();
                 _log.Info($"======== Dillon.Server startup v{Assembly.GetExecutingAssembly().GetName().Version}");
                 foreach (DictionaryEntry e in Environment.GetEnvironmentVariables())
                     _log.Debug(e.Key + ":" + e.Value);
 
-                ApplyCommandArguments(args, config);
-
-                //plugins
-
-                if (!TryParseConfiguration(config))
-                    return 1;
-
+                var simulator = new InputSimulator();
+                var inputSimulator = new KeyboardSimulatorAdapter(simulator.Keyboard);
+                var coreMappingFactory = new CoreMappingFactory();
+                coreMappingFactory.RegisterDependancy(inputSimulator);
+                var configurator = new Configurator(coreMappingFactory);
+                var config = configurator.Configure(args);
                 return RunApplication(config);
-            }
-            catch (Exception e)
-            {
-                HandleException(e, "An exception occured whilst running the application. Check the log file for further information.");
+
+            } catch (Exception e) {
+                _log.Error(e);
+                MessageBox.Show($"An exception occured whilst running the application. Check the log file for further information.\n\n{e.Message}",
+                    "An exception occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return 2;
             }
-        }
-
-        private static void ApplyCommandArguments(string[] args, Configuration config) {
-            foreach (var arg in args) {
-                if (arg == "-d")
-                    config.Debug = true;
-            }
-
-#if DEBUG
-            config.Debug = true;
-#endif
-            config.UIFolder = Path.Combine(Path.GetDirectoryName(Application.ExecutablePath), "UI");
-
-            if (config.Debug)
-                ApplyDebugMode();
-        }
-
-        private static void ApplyDebugMode() {
-            //set log level to TRACE
-            //set archiveOnStartup to true
         }
 
         private static int RunApplication(Configuration config) {
@@ -64,25 +45,6 @@ namespace Dillon.Server {
             _log.Info("======== Dillon.Server shutdown");
 
             return 0;
-        }
-
-        private static bool TryParseConfiguration(Configuration config) {
-            try {
-                Configuration.Parse(config);
-                return true;
-            }
-            catch (TypeInitializationException e) {
-                HandleException(e, "An exception occured trying to parse one or more of the configuration files.");
-                return false;
-            }
-        }
-
-        private static void HandleException(Exception e, string message) {
-            _log.Error(e);
-            var exceptionMessage = e.Message; //maybe get innermost exception?
-            MessageBox.Show(
-                $"{message}\n\n{exceptionMessage}",
-                "An exception occured", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }

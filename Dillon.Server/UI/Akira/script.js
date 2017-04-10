@@ -1,53 +1,40 @@
 ﻿var updatesQueue = [];
 
-function calculateValue(element, pageX, pageY) {
+function calculateUpdate(element, pageX, pageY) {
     //todo check class for orientation, assume vertical for now
     element = $(element);
 
+    var update = {};
     var height = element.outerHeight();
-    var y = height - (pageY - element.offset().top);
-    y = y.clamp(0, height);
+    update.y = height - (pageY - element.offset().top);
+    update.y = update.y.clamp(0, height);
 
     var width = element.outerWidth();
-    var x = width - (pageX - element.offset().left);
-    x = x.clamp(0, width);
+    update.x = pageX - element.offset().left;
+    update.x = update.x.clamp(0, width);
 
-    return { x: x, y: y }
+    update.normalisedX = update.x / width;
+    update.normalisedY = update.y / height;
+
+    return update;
 }
 
-function submitValue(id, value) {
-    var url = "/?id=" + id + "&value=" + value;
-    console.log("submitting: " + url);
-
-    $.ajax({
-        method: "GET",
-        url: url,
-        cache: false, //don't let the browser fake the response
-    })
-    .done(function (msg) {
-        console.log("submission done");
-    })
-    .fail(function (msg) {
-        console.error(msg);
-    });
-}
-
-function updateElement(element, x, y) {
+function updateElement(element, update) {
     //todo check element type and class for orientation, assume vertical UL for now
     switch (element.tagName) {
         case "BUTTON":
 
             break;
         case "UL":
-            updateVerticalUL(element, y);
+            updateVerticalUL(element, update);
             break;
     }
 }
 
-function updateVerticalUL(ul, y) {
+function updateVerticalUL(ul, update) {
     ul = $(ul);
     var height = ul.outerHeight();
-    var percent = Math.floor((y / height) * 100);
+    var percent = Math.floor((update.y / height) * 100);
     var tenth = Math.ceil(percent / 10);
 
     var items = ul.children("li");
@@ -64,15 +51,15 @@ function updateVerticalUL(ul, y) {
     $("h1[data-id='" + id + "'").text(percent);
 }
 
-function enqueueUpdate(id, x, y) {
+function enqueueUpdate(update) {
     var lastUpdate = updatesQueue[updatesQueue.length - 1];
-    if (lastUpdate && lastUpdate.id === id && lastUpdate.x === x && lastUpdate.y === y) {
-        console.warn("skipping update due to duplication. Id: " + id + " " + x + "," + y + " queue length: " + updatesQueue.length);
+    if (lastUpdate && lastUpdate.id === update.id && lastUpdate.x === update.x && lastUpdate.y === update.y) {
+        console.warn("skipping update due to duplication. Id: " + update.id + " " + update.x + "," + update.y + " queue length: " + updatesQueue.length);
         return;
     }
 
-    console.log("Queued id: " + id + " x: " + x + " y: " + y);
-    updatesQueue.push({ id: id, x: x, y: y });
+    console.log("Queued id: " + update.id + " x: " + update.x + " y: " + update.y);
+    updatesQueue.push(update);
 }
 
 function flushUpdatesQueue(queue) {
@@ -89,7 +76,11 @@ function flushUpdatesQueue(queue) {
     var updates = "";
     for (var i = 0; i < batchSize; ++i) {
         var item = "updates[" + i + "]";
-        updates += item + "[id]=" + queue[i].id + "&" + item + "[x]=" + queue[i].x + "&" + item + "[y]=" + queue[i].y + "&";
+        updates += item + "[id]=" + queue[i].id + "&" +
+                   item + "[x]=" + queue[i].x + "&" +
+                   item + "[y]=" + queue[i].y + "&" +
+                   item + "[normalisedX]=" + queue[i].normalisedX + "&" + 
+                   item + "[normalisedY]=" + queue[i].normalisedY + "&";
     }
     queue.splice(0, batchSize); //new updates could have been added so only remove the batch we just processed
     updates = updates.slice(0, -1);
@@ -111,33 +102,36 @@ function flushUpdatesQueue(queue) {
 }
 
 function respondToEvent(element, x, y) {
-    var coords = calculateValue(element, x, y);
-    var id = $(element).data("id");
-    enqueueUpdate(id, coords.x, coords.y); //todo pull id from data attribute
-    updateElement(element, coords.x, coords.y);
+    var update = calculateUpdate(element, x, y);
+    update.id = $(element).data("id");
+    enqueueUpdate(update);
+    updateElement(element, update);
 
-    return coords;
+    return update;
 }
 
 var ongoingTouches = [];
 
 function initEvents() {
-    var sliders = document.getElementsByTagName("ul");
-    var buttons = document.getElementsByTagName("button");
-    for (var i = 0; i < sliders.length; ++i) {
-        sliders[i].addEventListener("touchstart", handleStart, false);
-        sliders[i].addEventListener("touchmove", handleMove, false);
-        sliders[i].addEventListener("touchcancel", handleCancel, false);
-        sliders[i].addEventListener("touchend", handleEnd, false);
+    var controls = document.querySelectorAll('[data-id]');
+
+    //var sliders = document.getElementsByTagName("ul");
+    //var buttons = document.getElementsByTagName("button");
+
+    for (var i = 0; i < controls.length; ++i) {
+        controls[i].addEventListener("touchstart", handleStart, false);
+        controls[i].addEventListener("touchmove", handleMove, false);
+        controls[i].addEventListener("touchcancel", handleCancel, false);
+        controls[i].addEventListener("touchend", handleEnd, false);
         
-        sliders[i].addEventListener("mousedown", handleMouseDown, false);
-        sliders[i].addEventListener("mousemove", handleMouseMove, false);
+        controls[i].addEventListener("mousedown", handleMouseDown, false);
+        controls[i].addEventListener("mousemove", handleMouseMove, false);
     }
 
-    for (var i = 0; i < buttons.length; ++i) {
-        buttons[i].addEventListener("touchstart", handleStart, false);
-        buttons[i].addEventListener("mousedown", handleMouseDown, false);
-    }
+    //for (var i = 0; i < buttons.length; ++i) {
+    //    buttons[i].addEventListener("touchstart", handleStart, false);
+    //    buttons[i].addEventListener("mousedown", handleMouseDown, false);
+    //}
 
     document.getElementsByTagName("body")[0].addEventListener("mouseup", handleMouseUp, false);
 }
@@ -235,7 +229,7 @@ function printDiagnostics() {
 $(document).ready(function () {
     printDiagnostics();
 
-    updateVerticalUL($('ul'), 0);
+    updateVerticalUL($('ul'), { y: 0 });
     initEvents();
 
     var queueTimer = setInterval(flushUpdatesQueue, 100, updatesQueue);

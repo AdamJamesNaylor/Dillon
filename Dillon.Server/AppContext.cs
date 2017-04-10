@@ -7,6 +7,7 @@ namespace Dillon.Server {
     using WindowsInput;
     using Autofac;
     using Autofac.Integration.WebApi;
+    using Common;
     using Controllers;
     using Microsoft.Owin.FileSystems;
     using Microsoft.Owin.Hosting;
@@ -22,6 +23,7 @@ namespace Dillon.Server {
         public AppContext(Configuration config) {
             _config = config;
             Application.ApplicationExit += OnApplicationExit;
+            _log = LogManager.GetCurrentClassLogger();
             Initialise();
         }
 
@@ -53,14 +55,21 @@ namespace Dillon.Server {
             _trayIconContextMenu.ResumeLayout(false);
             _trayIcon.ContextMenuStrip = _trayIconContextMenu;
 
-            var log = LogManager.GetCurrentClassLogger();
-            string url = $"{_config.Scheme}://{_config.Domain}:{_config.Port}";
-            log.Debug($"Starting webserver listening on {url}");
-            WebApp.Start(url, Startup);
+            StartServer();
 
             _trayIcon.Visible = true;
             _trayIcon.ShowBalloonTip(10000, "Dillon server", "The Dillon server is now listening on port " + _config.Port, ToolTipIcon.Info);
 
+        }
+
+        private void StartServer() {
+            try {
+                string url = $"{_config.Scheme}://{_config.Domain}:{_config.Port}";
+                _log.Debug($"Starting webserver listening on {url}");
+                WebApp.Start(url, Startup);
+            } catch (Exception e) {
+                throw new Exception($"Unable to start web server. {e.InnerMostException().Message}");
+            }
         }
 
         private void Startup(IAppBuilder appBuilder) {
@@ -74,7 +83,6 @@ namespace Dillon.Server {
 
             var inputCache = new InputCache();
             builder.RegisterInstance(_config).As<IConfiguration>();
-            builder.RegisterType<InputSimulator>().As<IInputSimulator>();
             builder.RegisterInstance(inputCache).As<IInputCache>();
 
             var container = builder.Build();
@@ -113,5 +121,6 @@ namespace Dillon.Server {
         private NotifyIcon _trayIcon;
         private ContextMenuStrip _trayIconContextMenu;
         private ToolStripMenuItem _closeMenuItem;
+        private Logger _log;
     }
 }

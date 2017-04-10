@@ -8,7 +8,7 @@ namespace Dillon.Server.Controllers {
     using System.Threading.Tasks;
     using System.Web.Http;
     using WindowsInput;
-    using WindowsInput.Native;
+    using Common;
     using NLog;
 
     public class InputCache
@@ -20,19 +20,12 @@ namespace Dillon.Server.Controllers {
         double Cache { get; set; }
     }
 
-    public class Update {
-        public int Id { get; set; }
-        public string X { get; set; }
-        public string Y { get; set; }
-    }
-
     [RoutePrefix("")]
     public class HomeController
         : ApiController {
 
-        public HomeController(IConfiguration config, IInputSimulator inputSimulator, IInputCache inputCache) {
+        public HomeController(IConfiguration config, IInputCache inputCache) {
             _config = config;
-            _inputSimulator = inputSimulator;
             _inputCache = inputCache;
         }
 
@@ -65,9 +58,8 @@ namespace Dillon.Server.Controllers {
 
                 if (_config.Mappings.ContainsKey(update.Id)) {
                     var mapping = _config.Mappings[update.Id];
-                    var keyCode = ConvertToKeyCode(mapping);
-                    _inputSimulator.Keyboard.KeyPress(keyCode);
-                    _log.Trace($"Raised KeyPress for key code {keyCode}");
+                    mapping.Execute(update);
+                    //_log.Trace($"Raised KeyPress for key code {keyCode}");
                 } else {
                     double amount = Convert.ToDouble(update.Y);
                     amount -= _inputCache.Cache;
@@ -76,10 +68,6 @@ namespace Dillon.Server.Controllers {
                 }
             }
             return Ok(updates.Length);
-        }
-
-        private VirtualKeyCode ConvertToKeyCode(int value) {
-            return (VirtualKeyCode)value;
         }
 
         private readonly IConfiguration _config;

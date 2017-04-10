@@ -4,6 +4,7 @@ namespace Dillon.Server {
     using System.IO;
     using JsonConfig;
     using NLog;
+    using PluginAPI.V1;
 
     public interface IConfiguration {
         bool Debug { get; }
@@ -12,7 +13,7 @@ namespace Dillon.Server {
         string Scheme { get; }
         string Domain { get; }
         int Port { get; }
-        IDictionary<int, int> Mappings { get; set; }
+        IDictionary<int, IMapping> Mappings { get; set; }
     }
 
     public class Configuration
@@ -26,40 +27,12 @@ namespace Dillon.Server {
 
         public string UI { get; set; }
 
-        public string Scheme { get; private set; }
-        public string Domain { get; private set; }
-        public int Port { get; private set; }
+        public string Scheme { get; set; }
+        public string Domain { get; set; }
+        public int Port { get; set; }
 
-        public IDictionary<int, int> Mappings { get; set; }
+        public IDictionary<int, IMapping> Mappings { get; set; }
 
-        public static void Parse(Configuration config) {
-            var log = LogManager.GetCurrentClassLogger();
-
-            var uiFolder = Config.Global.uiFolder;
-            if (!(uiFolder is NullExceptionPreventer)) {
-                config.UIFolder = uiFolder.ToString().TrimEnd(Path.DirectorySeparatorChar);
-            }
-            config.UI = Config.Global.ui;
-            config.Scheme = Config.Global.scheme;
-            config.Domain = Config.Global.domain;
-            config.Port = Config.Global.port;
-
-            config.Mappings = new Dictionary<int, int>();
-
-            var mappings = Config.Global.mappings;
-            if (mappings is NullExceptionPreventer) {
-                log.Warn("No mappings found in configuration file.");
-                return;
-            }
-
-            foreach (var mapping in mappings) {
-                //string type = mapping.type.ToString();
-                //switch (type) {
-                    //todo add a plugin mapping factory that gives each mapping a chance to be created with the correct dependancies.
-                //}
-                config.Mappings.Add(mapping.id, mapping.keyCode);
-            }
-        }
     }
 
     public abstract class Mapping {
