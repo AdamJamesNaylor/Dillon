@@ -113,10 +113,8 @@ function respondToEvent(element, x, y) {
 var ongoingTouches = [];
 
 function initEvents() {
-    var controls = document.querySelectorAll('[data-id]');
-
+    var controls = document.getElementsByClassName('dualAxis');
     //var sliders = document.getElementsByTagName("ul");
-    //var buttons = document.getElementsByTagName("button");
 
     for (var i = 0; i < controls.length; ++i) {
         controls[i].addEventListener("touchstart", handleStart, false);
@@ -128,10 +126,11 @@ function initEvents() {
         controls[i].addEventListener("mousemove", handleMouseMove, false);
     }
 
-    //for (var i = 0; i < buttons.length; ++i) {
-    //    buttons[i].addEventListener("touchstart", handleStart, false);
-    //    buttons[i].addEventListener("mousedown", handleMouseDown, false);
-    //}
+    var buttons = document.getElementsByTagName("button");
+    for (var i = 0; i < buttons.length; ++i) {
+        buttons[i].addEventListener("touchstart", handleStart, false);
+        buttons[i].addEventListener("mousedown", handleMouseDown, false);
+    }
 
     document.getElementsByTagName("body")[0].addEventListener("mouseup", handleMouseUp, false);
 }

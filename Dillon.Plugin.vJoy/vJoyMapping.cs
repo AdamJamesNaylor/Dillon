@@ -118,30 +118,27 @@
     public class vJoyButtonMapping
         : IMapping {
 
-        public vJoyButtonMapping(int[] buttons, uint deviceId, vJoy joy) {
-            foreach (var button in buttons) {
-                _buttons |= (uint)(0x1 << (button - 1));
-            }
+        public vJoyButtonMapping(uint[] buttons, uint deviceId, vJoy joy, ILoggerAdapter logger) {
+            _buttons = buttons;
             _deviceId = deviceId;
             _joy = joy;
+            _logger = logger;
         }
 
         public void Execute(Update update) {
-            _deviceState = new vJoy.JoystickState {
-                Buttons = _buttons
-            };
-
-            if (!_joy.UpdateVJD(_deviceId, ref _deviceState))
+            if (_joy.GetVJDStatus(_deviceId) == VjdStat.VJD_STAT_OWN) {
+                _logger.Trace($"vJoy device not owned on process {_joy.GetOwnerPid(_deviceId)}.");
                 _joy.AcquireVJD(_deviceId);
+                _logger.Trace("Device reacquired.");
+            }
 
-            _deviceState = new vJoy.JoystickState {
-                Buttons = 0
-            };
-            _joy.UpdateVJD(_deviceId, ref _deviceState);
+            foreach (var button in _buttons)
+                _joy.SetBtn(true, _deviceId, button);
         }
 
         private vJoy _joy;
-        private readonly uint _buttons;
+        private readonly ILoggerAdapter _logger;
+        private readonly uint[] _buttons;
         private uint _deviceId;
         private vJoy.JoystickState _deviceState;
 

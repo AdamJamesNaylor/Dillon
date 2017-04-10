@@ -44,7 +44,8 @@ namespace Dillon.Plugin.vJoy {
                     break;
                 case VjdStat.VJD_STAT_FREE:
                     _logger.Debug($"Virtual device {_vDeviceId} is currently free, attempting to acquire.");
-                    if (!_joy.AcquireVJD(_vDeviceId)) {
+                    _deviceIsAcquired = _joy.AcquireVJD(_vDeviceId);
+                    if (!_deviceIsAcquired) {
                         _logger.Warn($"Unable to acquire virtual device {_vDeviceId} even though it's status is VJD_STAT_FREE.");
                         return;
                     }
@@ -54,6 +55,8 @@ namespace Dillon.Plugin.vJoy {
                     _logger.Warn($"The status of virtual device {_vDeviceId} is currently {StatusString(deviceStatus)} ({StatusDescription(deviceStatus)}), Cannot continue.");
                     return;
             }
+
+            _logger.Trace($"vJoy device acquired on process {_joy.GetOwnerPid(_vDeviceId)}");
 
             LogDeviceCapabilities();
 
@@ -120,7 +123,7 @@ namespace Dillon.Plugin.vJoy {
                         return new vJoyDualAxisMapping(_vDeviceId, _joy);
                     case "buttons":
                         string buttons = map[key].ToString();
-                        return new vJoyButtonMapping(GetButtons(buttons), _vDeviceId, _joy);
+                        return new vJoyButtonMapping(GetButtons(buttons), _vDeviceId, _joy, _logger);
                 }
             }
 
@@ -132,7 +135,7 @@ namespace Dillon.Plugin.vJoy {
         }
 
         ~vJoyMappingFactory() {
-            if (_joy == null)
+            if (!_deviceIsAcquired)
                 return;
 
             var status = _joy.GetVJDStatus(_vDeviceId);
@@ -147,6 +150,8 @@ namespace Dillon.Plugin.vJoy {
         private const uint MinDeviceId = 1;
         private const uint MaxDeviceId = 16;
         private const int NoDeviceFound = 0;
+
+        private bool _deviceIsAcquired = false;
     }
 
     }
