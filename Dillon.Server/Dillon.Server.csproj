@@ -125,9 +125,12 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Diagnostics\LoggerAdapter.cs" />
     <Compile Include="Input\KeyboardSimulatorAdapter.cs" />
+    <Compile Include="Input\MouseSimulatorAdapter.cs" />
     <Compile Include="Mappings\CoreMappingFactory.cs" />
     <Compile Include="Mappings\KeyCodeMapping.cs" />
     <Compile Include="Mappings\KeyCodesMapping.cs" />
+    <Compile Include="Mappings\MouseHorizontalScrollMapping.cs" />
+    <Compile Include="Mappings\MouseVerticalScrollMapping.cs" />
     <Compile Include="Mappings\TextEntryMapping.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

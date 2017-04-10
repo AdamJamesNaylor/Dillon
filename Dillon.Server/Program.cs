@@ -23,9 +23,11 @@ namespace Dillon.Server {
                     _log.Debug(e.Key + ":" + e.Value);
 
                 var simulator = new InputSimulator();
-                var inputSimulator = new KeyboardSimulatorAdapter(simulator.Keyboard);
+                var keyboardSimulator = new KeyboardSimulatorAdapter(simulator.Keyboard);
+                var mouseSimulator = new MouseSimulatorAdapter(simulator.Mouse);
                 var coreMappingFactory = new CoreMappingFactory();
-                coreMappingFactory.RegisterDependancy(inputSimulator);
+                coreMappingFactory.RegisterDependancy(keyboardSimulator);
+                coreMappingFactory.RegisterDependancy(mouseSimulator);
                 var configurator = new Configurator(coreMappingFactory);
                 var config = configurator.Configure(args);
                 return RunApplication(config);

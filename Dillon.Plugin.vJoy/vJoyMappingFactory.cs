@@ -130,8 +130,8 @@ namespace Dillon.Plugin.vJoy {
             return new NullMapping();
         }
 
-        private int[] GetButtons(string buttons) {
-            return Array.ConvertAll(buttons.Split(','), Convert.ToInt32);
+        private uint[] GetButtons(string buttons) {
+            return Array.ConvertAll(buttons.Split(','), Convert.ToUInt32);
         }
 
         ~vJoyMappingFactory() {

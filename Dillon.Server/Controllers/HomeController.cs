@@ -11,22 +11,12 @@ namespace Dillon.Server.Controllers {
     using Common;
     using NLog;
 
-    public class InputCache
-        : IInputCache {
-        public double Cache { get; set; }
-    }
-
-    public interface IInputCache {
-        double Cache { get; set; }
-    }
-
     [RoutePrefix("")]
     public class HomeController
         : ApiController {
 
-        public HomeController(IConfiguration config, IInputCache inputCache) {
+        public HomeController(IConfiguration config) {
             _config = config;
-            _inputCache = inputCache;
         }
 
         [HttpGet]
@@ -59,12 +49,8 @@ namespace Dillon.Server.Controllers {
                 if (_config.Mappings.ContainsKey(update.Id)) {
                     var mapping = _config.Mappings[update.Id];
                     mapping.Execute(update);
-                    //_log.Trace($"Raised KeyPress for key code {keyCode}");
                 } else {
-                    double amount = Convert.ToDouble(update.Y);
-                    amount -= _inputCache.Cache;
-                    _inputCache.Cache += amount;
-                    _inputSimulator.Mouse.VerticalScroll((int) amount);
+                    _log.Warn($"No mapping found for id {update.Id}.");
                 }
             }
             return Ok(updates.Length);
@@ -72,7 +58,6 @@ namespace Dillon.Server.Controllers {
 
         private readonly IConfiguration _config;
         private readonly IInputSimulator _inputSimulator;
-        private readonly IInputCache _inputCache;
         private Logger _log = LogManager.GetCurrentClassLogger();
     }
 }

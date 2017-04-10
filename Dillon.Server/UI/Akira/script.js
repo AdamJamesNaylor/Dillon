@@ -90,10 +90,11 @@ function flushUpdatesQueue(queue) {
     $.ajax({
         method: "GET",
         url: url,
-        cache: false, //don't let the browser fake the response
+        async: false, //because this code isn't run on the UI thread (setInterval) it's ok to wait
+        cache: false //don't let the browser fake the response
     })
     .done(function (response) {
-        console.log("Submission done for " + response + " updates.");
+        console.log("Submission done for " + response + " updates."); //todo use promises here to queue up next batch rather than a timer
     })
     .fail(function (msg) {
         console.error(msg);
@@ -113,17 +114,26 @@ function respondToEvent(element, x, y) {
 var ongoingTouches = [];
 
 function initEvents() {
-    var controls = document.getElementsByClassName('dualAxis');
-    //var sliders = document.getElementsByTagName("ul");
-
-    for (var i = 0; i < controls.length; ++i) {
-        controls[i].addEventListener("touchstart", handleStart, false);
-        controls[i].addEventListener("touchmove", handleMove, false);
-        controls[i].addEventListener("touchcancel", handleCancel, false);
-        controls[i].addEventListener("touchend", handleEnd, false);
+    var dualAxis = document.getElementsByClassName('dual-axis');
+    for (var i = 0; i < dualAxis.length; ++i) {
+        dualAxis[i].addEventListener("touchstart", handleStart, false);
+        dualAxis[i].addEventListener("touchmove", handleMove, false);
+        dualAxis[i].addEventListener("touchcancel", handleCancel, false);
+        dualAxis[i].addEventListener("touchend", handleEnd, false);
         
-        controls[i].addEventListener("mousedown", handleMouseDown, false);
-        controls[i].addEventListener("mousemove", handleMouseMove, false);
+        dualAxis[i].addEventListener("mousedown", handleMouseDown, false);
+        dualAxis[i].addEventListener("mousemove", handleMouseMove, false);
+    }
+
+    var uls = document.getElementsByTagName("ul");
+    for (var i = 0; i < uls.length; ++i) {
+        uls[i].addEventListener("touchstart", handleStart, false);
+        uls[i].addEventListener("touchmove", handleMove, false);
+        uls[i].addEventListener("touchcancel", handleCancel, false);
+        uls[i].addEventListener("touchend", handleEnd, false);
+
+        uls[i].addEventListener("mousedown", handleMouseDown, false);
+        uls[i].addEventListener("mousemove", handleMouseMove, false);
     }
 
     var buttons = document.getElementsByTagName("button");

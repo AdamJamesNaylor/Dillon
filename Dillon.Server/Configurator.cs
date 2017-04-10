@@ -97,7 +97,14 @@ namespace Dillon.Server {
                     if (!(keycodes is NullExceptionPreventer)) {
                         config.Mappings.Add(mapping.id, _coreMappingFactory.Create("keycodes", mapping));
                     }
-                } else { //plugin mapping
+
+                    var coreType = mapping.type;
+                    if (!(coreType is NullExceptionPreventer)) {
+                        if (coreType == "vscroll" || coreType == "hscroll")
+                            config.Mappings.Add(mapping.id, _coreMappingFactory.Create(coreType, mapping));
+                    }
+                }
+                else { //plugin mapping
                     var type = map.type;
                     if (type is NullExceptionPreventer) {
                         throw new Exception($"Mapping with Id {mapping.Id} has an untyped map. All mappings with map properties must specify a type, check the config file.");

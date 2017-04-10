@@ -11,18 +11,10 @@
             : base(vDeviceId, joy) { }
 
         public override void Execute(Update update) {
-            DeviceState = new vJoy.JoystickState {
-                bDevice = (byte) DeviceId,
-                AxisX = (int) (AxisRanges[0].Max*update.NormalisedX),
-                AxisY = (int) AxisRanges[1].Dead,
-                AxisZ = (int) AxisRanges[2].Dead,
-                AxisXRot = (int) AxisRanges[3].Dead,
-                AxisYRot = (int) AxisRanges[4].Dead,
-                AxisZRot = (int) AxisRanges[5].Dead
-            };
-
-            if (!Joy.UpdateVJD(DeviceId, ref DeviceState))
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN) 
                 Joy.AcquireVJD(DeviceId);
+
+            Joy.SetAxis((int)(AxisRanges[0].Max * update.NormalisedX), DeviceId, HID_USAGES.HID_USAGE_X);
         }
     }
 
@@ -33,18 +25,11 @@
             : base(vDeviceId, joy) { }
 
         public override void Execute(Update update) {
-            DeviceState = new vJoy.JoystickState {
-                bDevice = (byte) DeviceId,
-                AxisX = (int) AxisRanges[0].Dead,
-                AxisY = (int) (AxisRanges[1].Max*update.NormalisedY),
-                AxisZ = (int) AxisRanges[2].Dead,
-                AxisXRot = (int) AxisRanges[3].Dead,
-                AxisYRot = (int) AxisRanges[4].Dead,
-                AxisZRot = (int) AxisRanges[5].Dead
-            };
-
-            if (!Joy.UpdateVJD(DeviceId, ref DeviceState))
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN) {
                 Joy.AcquireVJD(DeviceId);
+            }
+
+            Joy.SetAxis((int)(AxisRanges[1].Max * update.NormalisedY), DeviceId, HID_USAGES.HID_USAGE_Y);
         }
     }
 
@@ -55,18 +40,11 @@
             : base(vDeviceId, joy) { }
 
         public override void Execute(Update update) {
-            DeviceState = new vJoy.JoystickState {
-                bDevice = (byte) DeviceId,
-                AxisX = (int) (AxisRanges[0].Max*update.NormalisedX),
-                AxisY = (int) (AxisRanges[1].Max*update.NormalisedY),
-                AxisZ = (int) AxisRanges[2].Dead,
-                AxisXRot = (int) AxisRanges[3].Dead,
-                AxisYRot = (int) AxisRanges[4].Dead,
-                AxisZRot = (int) AxisRanges[5].Dead
-            };
-
-            if (!Joy.UpdateVJD(DeviceId, ref DeviceState))
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN)
                 Joy.AcquireVJD(DeviceId);
+
+            Joy.SetAxis((int)(AxisRanges[0].Max * update.NormalisedX), DeviceId, HID_USAGES.HID_USAGE_X);
+            Joy.SetAxis((int)(AxisRanges[1].Max * update.NormalisedY), DeviceId, HID_USAGES.HID_USAGE_Y);
         }
     }
 
@@ -91,8 +69,6 @@
             AxisRanges[5] = GetRange(HID_USAGES.HID_USAGE_RZ);
             AxisRanges[6] = GetRange(HID_USAGES.HID_USAGE_SL0);
             AxisRanges[7] = GetRange(HID_USAGES.HID_USAGE_SL1);
-
-            //Execute(new Update {NormalisedY = (float) AxisRanges[1].Dead/AxisRanges[1].Max});
         }
 
         public abstract void Execute(Update update);
@@ -126,14 +102,16 @@
         }
 
         public void Execute(Update update) {
-            if (_joy.GetVJDStatus(_deviceId) == VjdStat.VJD_STAT_OWN) {
+            if (_joy.GetVJDStatus(_deviceId) != VjdStat.VJD_STAT_OWN) {
                 _logger.Trace($"vJoy device not owned on process {_joy.GetOwnerPid(_deviceId)}.");
                 _joy.AcquireVJD(_deviceId);
                 _logger.Trace("Device reacquired.");
             }
 
-            foreach (var button in _buttons)
+            foreach (var button in _buttons) {
                 _joy.SetBtn(true, _deviceId, button);
+                _joy.SetBtn(false, _deviceId, button);
+            }
         }
 
         private vJoy _joy;

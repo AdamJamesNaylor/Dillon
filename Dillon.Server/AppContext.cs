@@ -4,11 +4,9 @@ namespace Dillon.Server {
     using System.Reflection;
     using System.Web.Http;
     using System.Windows.Forms;
-    using WindowsInput;
     using Autofac;
     using Autofac.Integration.WebApi;
     using Common;
-    using Controllers;
     using Microsoft.Owin.FileSystems;
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.StaticFiles;
@@ -81,9 +79,7 @@ namespace Dillon.Server {
 
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 
-            var inputCache = new InputCache();
             builder.RegisterInstance(_config).As<IConfiguration>();
-            builder.RegisterInstance(inputCache).As<IInputCache>();
 
             var container = builder.Build();
             config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
