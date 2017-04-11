@@ -120,8 +120,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppContext.cs" />
-    <Compile Include="Configuration.cs" />
-    <Compile Include="Configurator.cs" />
+    <Compile Include="Configuration\Configuration.cs" />
+    <Compile Include="Configuration\Configurator.cs" />
+    <Compile Include="Configuration\DependancyGraph.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Diagnostics\LoggerAdapter.cs" />
     <Compile Include="Input\KeyboardSimulatorAdapter.cs" />

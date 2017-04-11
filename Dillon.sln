@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{8CE7AA82-50D1-40C0-8A2A-46B29BA12BC7}"
-	ProjectSection(SolutionItems) = preProject
-		index.html = index.html
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dillon.Server", "Dillon.Server\Dillon.Server.csproj", "{819A616A-810C-4593-82EA-658AEFBE5BC9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dillon.PluginAPI", "Dillon.PluginAPI\Dillon.PluginAPI.csproj", "{03B89FCB-2906-42DD-BE59-F6D1C69D2D52}"

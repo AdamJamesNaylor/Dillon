@@ -10,7 +10,7 @@
         public IEnumerable<string> SupportedMappings = new List<string> {PlaySoundEffectMapping.Name};
 
         public void RegisterDependancy<T>(T dependancy) {
-            var simulator = dependancy as IKeyboardSimulator;
+            var simulator = dependancy as IKeyboardSimulatorAdapter;
             if (simulator != null) {
                 _keyboardSimulator = simulator;
             }
@@ -27,7 +27,7 @@
             return new PlaySoundEffectMapping();
         }
 
-        private IKeyboardSimulator _keyboardSimulator = null;
+        private IKeyboardSimulatorAdapter _keyboardSimulator = null;
     }
 
     public interface IMappingFactory {

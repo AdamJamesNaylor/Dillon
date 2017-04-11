@@ -3,88 +3,88 @@ namespace Dillon.Server.Input {
     using Common;
 
     public class MouseSimulatorAdapter
-        : IMouseSimulator {
+        : IMouseSimulatorAdapter {
 
         public MouseSimulatorAdapter(WindowsInput.IMouseSimulator mouseSimulator) {
             _mouseSimulator = mouseSimulator;
         }
 
-        public IMouseSimulator MoveMouseBy(int pixelDeltaX, int pixelDeltaY) {
+        public IMouseSimulatorAdapter MoveMouseBy(int pixelDeltaX, int pixelDeltaY) {
             _mouseSimulator.MoveMouseBy(pixelDeltaX, pixelDeltaY);
             return this;
         }
 
-        public IMouseSimulator MoveMouseTo(double absoluteX, double absoluteY) {
+        public IMouseSimulatorAdapter MoveMouseTo(double absoluteX, double absoluteY) {
             _mouseSimulator.MoveMouseTo(absoluteX, absoluteY);
             return this;
         }
 
-        public IMouseSimulator LeftButtonDown() {
+        public IMouseSimulatorAdapter LeftButtonDown() {
             _mouseSimulator.LeftButtonDown();
             return this;
         }
 
-        public IMouseSimulator LeftButtonUp() {
+        public IMouseSimulatorAdapter LeftButtonUp() {
             _mouseSimulator.LeftButtonUp();
             return this;
         }
 
-        public IMouseSimulator LeftButtonClick() {
+        public IMouseSimulatorAdapter LeftButtonClick() {
             _mouseSimulator.LeftButtonClick();
             return this;
         }
 
-        public IMouseSimulator LeftButtonDoubleClick() {
+        public IMouseSimulatorAdapter LeftButtonDoubleClick() {
             _mouseSimulator.LeftButtonDoubleClick();
             return this;
         }
 
-        public IMouseSimulator RightButtonDown() {
+        public IMouseSimulatorAdapter RightButtonDown() {
             _mouseSimulator.RightButtonDown();
             return this;
         }
 
-        public IMouseSimulator RightButtonUp() {
+        public IMouseSimulatorAdapter RightButtonUp() {
             _mouseSimulator.RightButtonUp();
             return this;
         }
 
-        public IMouseSimulator RightButtonClick() {
+        public IMouseSimulatorAdapter RightButtonClick() {
             _mouseSimulator.RightButtonClick();
             return this;
         }
 
-        public IMouseSimulator RightButtonDoubleClick() {
+        public IMouseSimulatorAdapter RightButtonDoubleClick() {
             _mouseSimulator.RightButtonDoubleClick();
             return this;
         }
 
-        public IMouseSimulator XButtonDown(int buttonId) {
+        public IMouseSimulatorAdapter XButtonDown(int buttonId) {
             _mouseSimulator.XButtonDown(buttonId);
             return this;
         }
 
-        public IMouseSimulator XButtonUp(int buttonId) {
+        public IMouseSimulatorAdapter XButtonUp(int buttonId) {
             _mouseSimulator.XButtonUp(buttonId);
             return this;
         }
 
-        public IMouseSimulator XButtonClick(int buttonId) {
+        public IMouseSimulatorAdapter XButtonClick(int buttonId) {
             _mouseSimulator.XButtonClick(buttonId);
             return this;
         }
 
-        public IMouseSimulator XButtonDoubleClick(int buttonId) {
+        public IMouseSimulatorAdapter XButtonDoubleClick(int buttonId) {
             _mouseSimulator.XButtonDoubleClick(buttonId);
             return this;
         }
 
-        public IMouseSimulator VerticalScroll(int scrollAmountInClicks) {
+        public IMouseSimulatorAdapter VerticalScroll(int scrollAmountInClicks) {
             _mouseSimulator.VerticalScroll(scrollAmountInClicks);
             return this;
         }
 
-        public IMouseSimulator HorizontalScroll(int scrollAmountInClicks) {
+        public IMouseSimulatorAdapter HorizontalScroll(int scrollAmountInClicks) {
             _mouseSimulator.HorizontalScroll(scrollAmountInClicks);
             return this;
         }

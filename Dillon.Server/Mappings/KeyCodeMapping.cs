@@ -2,12 +2,11 @@
 using Dillon.Common;
 
 namespace Dillon.Server.Mappings {
-    using Controllers;
     using PluginAPI.V1;
 
     public class KeyCodeMapping
         : IMapping {
-        public KeyCodeMapping(IKeyboardSimulator keyboard, VirtualKeyCode keyCode) {
+        public KeyCodeMapping(IKeyboardSimulatorAdapter keyboard, VirtualKeyCode keyCode) {
             _keyboard = keyboard;
             _keyCode = keyCode;
         }
@@ -17,6 +16,6 @@ namespace Dillon.Server.Mappings {
         }
 
         private readonly VirtualKeyCode _keyCode;
-        private readonly IKeyboardSimulator _keyboard;
+        private readonly IKeyboardSimulatorAdapter _keyboard;
     }
 }

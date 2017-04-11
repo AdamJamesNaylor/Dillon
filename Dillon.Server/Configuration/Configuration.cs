@@ -1,9 +1,6 @@
 namespace Dillon.Server {
     using System;
     using System.Collections.Generic;
-    using System.IO;
-    using JsonConfig;
-    using NLog;
     using PluginAPI.V1;
 
     public interface IConfiguration {

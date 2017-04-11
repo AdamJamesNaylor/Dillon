@@ -5,7 +5,7 @@ namespace Dillon.Server.Mappings {
 
     public class TextEntryMapping
         : IMapping {
-        public TextEntryMapping(IKeyboardSimulator keyboard, string text) {
+        public TextEntryMapping(IKeyboardSimulatorAdapter keyboard, string text) {
             _keyboard = keyboard;
             _text = text;
         }
@@ -15,6 +15,6 @@ namespace Dillon.Server.Mappings {
         }
 
         private readonly string _text;
-        private readonly IKeyboardSimulator _keyboard;
+        private readonly IKeyboardSimulatorAdapter _keyboard;
     }
 }

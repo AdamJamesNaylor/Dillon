@@ -5,7 +5,7 @@
     public class MouseVerticalScrollMapping
         : IMapping {
 
-        public MouseVerticalScrollMapping(IMouseSimulator mouseSimulator) {
+        public MouseVerticalScrollMapping(IMouseSimulatorAdapter mouseSimulator) {
             _mouseSimulator = mouseSimulator;
         }
 
@@ -16,6 +16,6 @@
         }
 
         private double _position;
-        private readonly IMouseSimulator _mouseSimulator;
+        private readonly IMouseSimulatorAdapter _mouseSimulator;
     }
 }

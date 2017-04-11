@@ -4,7 +4,7 @@
 
     public class MouseHorizontalScrollMapping : IMapping
     {
-        public MouseHorizontalScrollMapping(IMouseSimulator mouseSimulator) {
+        public MouseHorizontalScrollMapping(IMouseSimulatorAdapter mouseSimulator) {
             _mouseSimulator = mouseSimulator;
         }
 
@@ -15,6 +15,6 @@
         }
 
         private double _position;
-        private readonly IMouseSimulator _mouseSimulator;
+        private readonly IMouseSimulatorAdapter _mouseSimulator;
     }
 }

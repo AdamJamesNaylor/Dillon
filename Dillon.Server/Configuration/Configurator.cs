@@ -1,8 +1,6 @@
 namespace Dillon.Server {
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using System.ComponentModel;
     using System.IO;
     using System.Windows.Forms;
     using Common;
@@ -13,9 +11,14 @@ namespace Dillon.Server {
     using Plugin.vJoy;
     using PluginAPI.V1;
 
-    public class Configurator {
+    public interface IConfigurator {
+        Configuration Configure(string[] args);
+    }
 
-        public Configurator(CoreMappingFactory coreMappingFactory) {
+    public class Configurator
+        : IConfigurator {
+
+        public Configurator(ICoreMappingFactory coreMappingFactory) {
             _coreMappingFactory = coreMappingFactory;
         }
 
@@ -120,7 +123,7 @@ namespace Dillon.Server {
             }
         }
 
-        private readonly CoreMappingFactory _coreMappingFactory;
+        private readonly ICoreMappingFactory _coreMappingFactory;
     }
 
     

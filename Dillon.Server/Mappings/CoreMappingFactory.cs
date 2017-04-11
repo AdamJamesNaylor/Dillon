@@ -6,16 +6,15 @@
     using PluginAPI.V1;
 
     public class CoreMappingFactory
-        : IMappingFactory {
+        : ICoreMappingFactory {
+
+        public CoreMappingFactory(IKeyboardSimulatorAdapter keyboardSimulator, IMouseSimulatorAdapter mouseSimulator) {
+            _keyboardSimulator = keyboardSimulator;
+            _mouseSimulator = mouseSimulator;
+        }
 
         public void RegisterDependancy<T>(T dependancy) {
-            var keyboard = dependancy as IKeyboardSimulator;
-            if (keyboard != null)
-                _keyboardSimulator = keyboard;
-
-            var mouse = dependancy as IMouseSimulator;
-            if (mouse != null)
-                _mouseSimulator = mouse;
+            
         }
 
         public IMapping Create(string name, IDictionary<string, object> mapping) {
@@ -40,8 +39,15 @@
         }
 
 
-        private IKeyboardSimulator _keyboardSimulator;
-        private IMouseSimulator _mouseSimulator;
+        private IKeyboardSimulatorAdapter _keyboardSimulator;
+        private IMouseSimulatorAdapter _mouseSimulator;
     }
 
+    public interface ICoreMappingFactory
+        : IMappingFactory {
+
+        void RegisterDependancy<T>(T dependancy);
+        IMapping Create(string name, IDictionary<string, object> map);
+
+    }
 }

@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace Dillon.Common
 {
-    public interface IKeyboardSimulator
+    public interface IKeyboardSimulatorAdapter
     {
-        IKeyboardSimulator KeyDown(VirtualKeyCode keyCode);
-        IKeyboardSimulator KeyPress(VirtualKeyCode keyCode);
-        IKeyboardSimulator KeyPress(params VirtualKeyCode[] keyCodes);
-        IKeyboardSimulator KeyUp(VirtualKeyCode keyCode);
-        IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes);
-        IKeyboardSimulator ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode);
-        IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKey, IEnumerable<VirtualKeyCode> keyCodes);
-        IKeyboardSimulator ModifiedKeyStroke(VirtualKeyCode modifierKeyCode, VirtualKeyCode keyCode);
-        IKeyboardSimulator Sleep(int millsecondsTimeout);
-        IKeyboardSimulator Sleep(TimeSpan timeout);
-        IKeyboardSimulator TextEntry(string text);
-        IKeyboardSimulator TextEntry(char character);
+        IKeyboardSimulatorAdapter KeyDown(VirtualKeyCode keyCode);
+        IKeyboardSimulatorAdapter KeyPress(VirtualKeyCode keyCode);
+        IKeyboardSimulatorAdapter KeyPress(params VirtualKeyCode[] keyCodes);
+        IKeyboardSimulatorAdapter KeyUp(VirtualKeyCode keyCode);
+        IKeyboardSimulatorAdapter ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, IEnumerable<VirtualKeyCode> keyCodes);
+        IKeyboardSimulatorAdapter ModifiedKeyStroke(IEnumerable<VirtualKeyCode> modifierKeyCodes, VirtualKeyCode keyCode);
+        IKeyboardSimulatorAdapter ModifiedKeyStroke(VirtualKeyCode modifierKey, IEnumerable<VirtualKeyCode> keyCodes);
+        IKeyboardSimulatorAdapter ModifiedKeyStroke(VirtualKeyCode modifierKeyCode, VirtualKeyCode keyCode);
+        IKeyboardSimulatorAdapter Sleep(int millsecondsTimeout);
+        IKeyboardSimulatorAdapter Sleep(TimeSpan timeout);
+        IKeyboardSimulatorAdapter TextEntry(string text);
+        IKeyboardSimulatorAdapter TextEntry(char character);
     }
 
     public enum VirtualKeyCode

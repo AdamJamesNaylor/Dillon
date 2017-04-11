@@ -16,9 +16,8 @@ namespace Dillon.Server {
 
     public class AppContext
         : ApplicationContext {
-        private readonly Configuration _config;
 
-        public AppContext(Configuration config) {
+        public AppContext(IConfiguration config) {
             _config = config;
             Application.ApplicationExit += OnApplicationExit;
             _log = LogManager.GetCurrentClassLogger();
@@ -118,5 +117,6 @@ namespace Dillon.Server {
         private ContextMenuStrip _trayIconContextMenu;
         private ToolStripMenuItem _closeMenuItem;
         private Logger _log;
+        private readonly IConfiguration _config;
     }
 }

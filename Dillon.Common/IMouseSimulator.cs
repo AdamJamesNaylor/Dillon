@@ -1,21 +1,21 @@
 namespace Dillon.Common {
-    public interface IMouseSimulator
+    public interface IMouseSimulatorAdapter
     {
-        IMouseSimulator HorizontalScroll(int scrollAmountInClicks);
-        IMouseSimulator LeftButtonClick();
-        IMouseSimulator LeftButtonDoubleClick();
-        IMouseSimulator LeftButtonDown();
-        IMouseSimulator LeftButtonUp();
-        IMouseSimulator MoveMouseBy(int pixelDeltaX, int pixelDeltaY);
-        IMouseSimulator MoveMouseTo(double absoluteX, double absoluteY);
-        IMouseSimulator RightButtonClick();
-        IMouseSimulator RightButtonDoubleClick();
-        IMouseSimulator RightButtonDown();
-        IMouseSimulator RightButtonUp();
-        IMouseSimulator VerticalScroll(int scrollAmountInClicks);
-        IMouseSimulator XButtonClick(int buttonId);
-        IMouseSimulator XButtonDoubleClick(int buttonId);
-        IMouseSimulator XButtonDown(int buttonId);
-        IMouseSimulator XButtonUp(int buttonId);
+        IMouseSimulatorAdapter HorizontalScroll(int scrollAmountInClicks);
+        IMouseSimulatorAdapter LeftButtonClick();
+        IMouseSimulatorAdapter LeftButtonDoubleClick();
+        IMouseSimulatorAdapter LeftButtonDown();
+        IMouseSimulatorAdapter LeftButtonUp();
+        IMouseSimulatorAdapter MoveMouseBy(int pixelDeltaX, int pixelDeltaY);
+        IMouseSimulatorAdapter MoveMouseTo(double absoluteX, double absoluteY);
+        IMouseSimulatorAdapter RightButtonClick();
+        IMouseSimulatorAdapter RightButtonDoubleClick();
+        IMouseSimulatorAdapter RightButtonDown();
+        IMouseSimulatorAdapter RightButtonUp();
+        IMouseSimulatorAdapter VerticalScroll(int scrollAmountInClicks);
+        IMouseSimulatorAdapter XButtonClick(int buttonId);
+        IMouseSimulatorAdapter XButtonDoubleClick(int buttonId);
+        IMouseSimulatorAdapter XButtonDown(int buttonId);
+        IMouseSimulatorAdapter XButtonUp(int buttonId);
     }
 }

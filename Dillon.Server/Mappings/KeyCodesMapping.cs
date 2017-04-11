@@ -5,7 +5,7 @@
 
     public class KeyCodesMapping
         : IMapping {
-        public KeyCodesMapping(IKeyboardSimulator keyboard, VirtualKeyCode[] keyCodes) {
+        public KeyCodesMapping(IKeyboardSimulatorAdapter keyboard, VirtualKeyCode[] keyCodes) {
             _keyboard = keyboard;
             _keyCodes = keyCodes;
         }
@@ -15,6 +15,6 @@
         }
 
         private readonly VirtualKeyCode[] _keyCodes;
-        private readonly IKeyboardSimulator _keyboard;
+        private readonly IKeyboardSimulatorAdapter _keyboard;
     }
 }
