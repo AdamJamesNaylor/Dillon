@@ -1,55 +1,23 @@
 ﻿namespace Dillon.Plugin.vJoy {
-    using System;
+    using System.Threading;
     using Common;
     using PluginAPI.V1;
     using vJoyInterfaceWrap;
 
-    public class vJoyXAxisMapping
-        : vJoyAxisMappingBase {
-
-        public vJoyXAxisMapping(uint vDeviceId, vJoy joy)
-            : base(vDeviceId, joy) { }
-
-        public override void Execute(Update update) {
-            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN) 
-                Joy.AcquireVJD(DeviceId);
-
-            Joy.SetAxis((int)(AxisRanges[0].Max * update.NormalisedX), DeviceId, HID_USAGES.HID_USAGE_X);
+    public abstract class vJoyMapping {
+        protected vJoyMapping(vJoy joy, uint deviceId, ILoggerAdapter logger) {
+            Joy = joy;
+            DeviceId = deviceId;
+            Logger = logger;
         }
-    }
 
-    public class vJoyYAxisMapping
-        : vJoyAxisMappingBase {
-
-        public vJoyYAxisMapping(uint vDeviceId, vJoy joy)
-            : base(vDeviceId, joy) { }
-
-        public override void Execute(Update update) {
-            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN) {
-                Joy.AcquireVJD(DeviceId);
-            }
-
-            Joy.SetAxis((int)(AxisRanges[1].Max * update.NormalisedY), DeviceId, HID_USAGES.HID_USAGE_Y);
-        }
-    }
-
-    public class vJoyDualAxisMapping
-        : vJoyAxisMappingBase {
-
-        public vJoyDualAxisMapping(uint vDeviceId, vJoy joy)
-            : base(vDeviceId, joy) { }
-
-        public override void Execute(Update update) {
-            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN)
-                Joy.AcquireVJD(DeviceId);
-
-            Joy.SetAxis((int)(AxisRanges[0].Max * update.NormalisedX), DeviceId, HID_USAGES.HID_USAGE_X);
-            Joy.SetAxis((int)(AxisRanges[1].Max * update.NormalisedY), DeviceId, HID_USAGES.HID_USAGE_Y);
-        }
+        protected readonly vJoy Joy;
+        protected readonly uint DeviceId;
+        protected readonly ILoggerAdapter Logger;
     }
 
     public abstract class vJoyAxisMappingBase
-        : IMapping {
+        : vJoyMapping, IMapping {
 
         protected struct AxisRange {
             public long Min;
@@ -57,9 +25,8 @@
             public long Dead;
         }
 
-        protected vJoyAxisMappingBase(uint deviceId, vJoy joy) {
-            DeviceId = deviceId;
-            Joy = joy;
+        protected vJoyAxisMappingBase(vJoy joy, uint deviceId, ILoggerAdapter logger)
+            : base(joy, deviceId, logger) {
 
             AxisRanges[0] = GetRange(HID_USAGES.HID_USAGE_X);
             AxisRanges[1] = GetRange(HID_USAGES.HID_USAGE_Y);
@@ -83,42 +50,80 @@
             return result;
         }
 
-        protected readonly uint DeviceId;
-        protected readonly vJoy Joy;
-
         protected readonly AxisRange[] AxisRanges = new AxisRange[8];
+    }
 
-        protected vJoy.JoystickState DeviceState;
+    public class vJoyXAxisMapping
+        : vJoyAxisMappingBase {
+
+        public vJoyXAxisMapping(vJoy joy, uint deviceId, ILoggerAdapter logger)
+            : base(joy, deviceId, logger) {
+        }
+
+        public override void Execute(Update update) {
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN)
+                Joy.AcquireVJD(DeviceId);
+
+            Joy.SetAxis((int) (AxisRanges[0].Max*update.NormalisedX), DeviceId, HID_USAGES.HID_USAGE_X);
+        }
+    }
+
+    public class vJoyYAxisMapping
+        : vJoyAxisMappingBase {
+
+        public vJoyYAxisMapping(vJoy joy, uint deviceId, ILoggerAdapter logger)
+            : base(joy, deviceId, logger) {
+        }
+
+        public override void Execute(Update update) {
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN) {
+                Joy.AcquireVJD(DeviceId);
+            }
+
+            Joy.SetAxis((int) (AxisRanges[1].Max*update.NormalisedY), DeviceId, HID_USAGES.HID_USAGE_Y);
+        }
+    }
+
+    public class vJoyDualAxisMapping
+        : vJoyAxisMappingBase {
+
+        public vJoyDualAxisMapping(vJoy joy, uint deviceId, ILoggerAdapter logger)
+            : base(joy, deviceId, logger) {
+        }
+
+        public override void Execute(Update update) {
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN)
+                Joy.AcquireVJD(DeviceId);
+
+            Joy.SetAxis((int) (AxisRanges[0].Max*update.NormalisedX), DeviceId, HID_USAGES.HID_USAGE_X);
+            Joy.SetAxis((int) (AxisRanges[1].Max*update.NormalisedY), DeviceId, HID_USAGES.HID_USAGE_Y);
+        }
     }
 
     public class vJoyButtonMapping
-        : IMapping {
+        : vJoyMapping, IMapping {
 
-        public vJoyButtonMapping(uint[] buttons, uint deviceId, vJoy joy, ILoggerAdapter logger) {
+        public vJoyButtonMapping(uint[] buttons, vJoy joy, uint deviceId, ILoggerAdapter logger, int delay)
+            : base(joy, deviceId, logger) {
             _buttons = buttons;
-            _deviceId = deviceId;
-            _joy = joy;
-            _logger = logger;
+            _delay = delay;
         }
 
         public void Execute(Update update) {
-            if (_joy.GetVJDStatus(_deviceId) != VjdStat.VJD_STAT_OWN) {
-                _logger.Trace($"vJoy device not owned on process {_joy.GetOwnerPid(_deviceId)}.");
-                _joy.AcquireVJD(_deviceId);
-                _logger.Trace("Device reacquired.");
+            if (Joy.GetVJDStatus(DeviceId) != VjdStat.VJD_STAT_OWN) {
+                Logger.Trace($"vJoy device not owned on process {Joy.GetOwnerPid(DeviceId)}.");
+                Joy.AcquireVJD(DeviceId);
+                Logger.Trace("Device reacquired.");
             }
 
             foreach (var button in _buttons) {
-                _joy.SetBtn(true, _deviceId, button);
-                _joy.SetBtn(false, _deviceId, button);
+                Joy.SetBtn(true, DeviceId, button);
+                Thread.Sleep(_delay);
+                Joy.SetBtn(false, DeviceId, button);
             }
         }
 
-        private vJoy _joy;
-        private readonly ILoggerAdapter _logger;
+        private readonly int _delay;
         private readonly uint[] _buttons;
-        private uint _deviceId;
-        private vJoy.JoystickState _deviceState;
-
     }
 }

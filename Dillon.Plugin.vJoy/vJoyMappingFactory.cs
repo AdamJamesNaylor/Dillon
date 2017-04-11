@@ -2,8 +2,6 @@
 namespace Dillon.Plugin.vJoy {
     using System;
     using System.Collections.Generic;
-    using System.ComponentModel;
-    using System.Runtime.InteropServices.ComTypes;
     using Common;
     using PluginAPI;
     using PluginAPI.V1;
@@ -12,8 +10,9 @@ namespace Dillon.Plugin.vJoy {
     public class vJoyMappingFactory
         : IMappingFactory {
 
-        public vJoyMappingFactory(ILoggerAdapter logger) {
+        public vJoyMappingFactory(ILoggerAdapter logger, IConfiguration config) {
             _logger = logger;
+            _config = config;
 
             _logger.Debug("Attempting to initialise virtual joystick.");
 
@@ -116,14 +115,14 @@ namespace Dillon.Plugin.vJoy {
                     case "axis":
                         string axis = map[key].ToString();
                         if (axis.ToLower() == "x")
-                            return new vJoyXAxisMapping(_vDeviceId, _joy);
+                            return new vJoyXAxisMapping(_joy, _vDeviceId, _logger);
                         if (axis.ToLower() == "y")
-                            return new vJoyYAxisMapping(_vDeviceId, _joy);
+                            return new vJoyYAxisMapping(_joy, _vDeviceId, _logger);
 
-                        return new vJoyDualAxisMapping(_vDeviceId, _joy);
+                        return new vJoyDualAxisMapping(_joy, _vDeviceId, _logger);
                     case "buttons":
                         string buttons = map[key].ToString();
-                        return new vJoyButtonMapping(GetButtons(buttons), _vDeviceId, _joy, _logger);
+                        return new vJoyButtonMapping(GetButtons(buttons), _joy, _vDeviceId, _logger, _config.ButtonDelay);
                 }
             }
 
@@ -146,6 +145,7 @@ namespace Dillon.Plugin.vJoy {
         private readonly vJoy _joy = new vJoy();
         private uint _vDeviceId = NoDeviceFound;
         private readonly ILoggerAdapter _logger;
+        private readonly IConfiguration _config;
 
         private const uint MinDeviceId = 1;
         private const uint MaxDeviceId = 16;

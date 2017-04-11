@@ -35,10 +35,6 @@
         IMapping Create(string name, IDictionary<string, object> map);
     }
 
-    public interface IMapping {
-        void Execute(Update update);
-    }
-
     public class PlaySoundEffectMapping
         : IMapping {
 

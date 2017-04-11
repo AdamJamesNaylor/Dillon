@@ -1,17 +1,8 @@
-namespace Dillon.Server {
+namespace Dillon.Server.Configuration {
     using System;
     using System.Collections.Generic;
+    using Common;
     using PluginAPI.V1;
-
-    public interface IConfiguration {
-        bool Debug { get; }
-        string UIFolder { get; }
-        string UI { get; }
-        string Scheme { get; }
-        string Domain { get; }
-        int Port { get; }
-        IDictionary<int, IMapping> Mappings { get; set; }
-    }
 
     public class Configuration
         : IConfiguration {
@@ -30,9 +21,11 @@ namespace Dillon.Server {
 
         public IDictionary<int, IMapping> Mappings { get; set; }
 
+        public int ButtonDelay { get; set; }
     }
 
-    public abstract class Mapping {
+    public abstract class Mapping
+    {
         public int Id { get; set; }
 
         public abstract void Execute();

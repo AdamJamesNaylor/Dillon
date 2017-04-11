@@ -9,6 +9,7 @@ namespace Dillon.Server.Controllers {
     using System.Web.Http;
     using WindowsInput;
     using Common;
+    using Configuration;
     using NLog;
 
     [RoutePrefix("")]

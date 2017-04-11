@@ -1,4 +1,4 @@
-namespace Dillon.Server {
+namespace Dillon.Server.Configuration {
     using System;
     using System.Collections.Generic;
     using System.IO;
@@ -37,7 +37,7 @@ namespace Dillon.Server {
             return config;
         }
 
-        private void ApplyCommandArguments(string[] args, Configuration config) {
+        private void ApplyCommandArguments(string[] args, Server.Configuration.Configuration config) {
             foreach (var arg in args) {
                 if (arg == "-d")
                     config.Debug = true;
@@ -69,6 +69,8 @@ namespace Dillon.Server {
             config.Domain = Config.Global.domain;
             config.Port = Config.Global.port;
 
+            config.ButtonDelay = Config.Global.buttonDelay;
+
             config.Mappings = new Dictionary<int, IMapping>();
 
             var mappings = Config.Global.mappings;
@@ -80,7 +82,7 @@ namespace Dillon.Server {
             //todo add a plugin mapping factory that gives each mapping a chance to be created with the correct dependancies.
             //todo temp. will be replaced with proper plugin loading code
             var logAdapter = new LoggerAdapter(log);
-            var joyFactory = new vJoyMappingFactory(logAdapter);
+            var joyFactory = new vJoyMappingFactory(logAdapter, config);
 
             foreach (var mapping in mappings) {
                 var map = mapping.map;

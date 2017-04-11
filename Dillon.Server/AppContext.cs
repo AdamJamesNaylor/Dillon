@@ -7,6 +7,7 @@ namespace Dillon.Server {
     using Autofac;
     using Autofac.Integration.WebApi;
     using Common;
+    using Configuration;
     using Microsoft.Owin.FileSystems;
     using Microsoft.Owin.Hosting;
     using Microsoft.Owin.StaticFiles;

@@ -9,6 +9,7 @@ namespace Dillon.Server {
     using Input;
     using Mappings;
     using Autofac;
+    using Configuration;
 
     internal static class Program {
         private static Logger _log;
