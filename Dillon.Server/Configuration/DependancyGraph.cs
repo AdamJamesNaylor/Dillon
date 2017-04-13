@@ -13,6 +13,8 @@
         public static IContainer RegisterDependancies(string[] args) {
             var builder = new ContainerBuilder();
 
+            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
+
             builder.Register(c => new InputSimulator()).As<IInputSimulator>();
             builder.Register(c => new KeyboardSimulatorAdapter(c.Resolve<IInputSimulator>().Keyboard))
                 .As<IKeyboardSimulatorAdapter>();
@@ -24,8 +26,6 @@
                 .As<ICoreMappingFactory>();
             builder.Register(c => new Configurator(c.Resolve<ICoreMappingFactory>())).As<IConfigurator>();
             builder.Register(c => c.Resolve<IConfigurator>().Configure(args)).As<IConfiguration>();
-
-            builder.Register(c => new AppContext(c.Resolve<IConfiguration>())).As<ApplicationContext>();
 
             builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
 

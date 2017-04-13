@@ -4,10 +4,7 @@ namespace Dillon.Server {
     using System.Collections;
     using System.Reflection;
     using System.Windows.Forms;
-    using WindowsInput;
     using NLog;
-    using Input;
-    using Mappings;
     using Autofac;
     using Configuration;
 
@@ -40,7 +37,7 @@ namespace Dillon.Server {
         private static void RunApplication(IContainer container) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(container.Resolve<ApplicationContext>());
+            Application.Run(new AppContext(container));
         }
     }
 }

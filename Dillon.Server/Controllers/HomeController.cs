@@ -2,6 +2,7 @@
 namespace Dillon.Server.Controllers {
     using System;
     using System.IO;
+    using System.Linq;
     using System.Net;
     using System.Net.Http;
     using System.Net.Http.Headers;
@@ -23,8 +24,12 @@ namespace Dillon.Server.Controllers {
         [HttpGet]
         [Route]
         public async Task<HttpResponseMessage> Index(string ui = "") {
+            _log.Debug($"UI '{ui}' requested.");
             if (string.IsNullOrEmpty(ui))
                 ui = _config.UI;
+
+            _log.Trace($"Attempting to serve UI '{ui}'.");
+
             //check configured ui exists. Maybe during startup and switch?
             var path = Path.Combine(_config.UIFolder, $"{ui}\\index.html");
             if (!File.Exists(path))
@@ -37,19 +42,26 @@ namespace Dillon.Server.Controllers {
                 throw new Exception($"There was a problem reading the HTML for the UI '{ui}'", e);
             }
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("text/html");
+            _log.Trace("Success.");
             return response;
         }
 
         [HttpGet]
         [Route("update")]
         public async Task<IHttpActionResult> Update([FromUri] Update[] updates) {
+            _log.Trace($"Update requested with {updates.Count()} updates.");
 
             foreach (var update in updates) {
-                _log.Trace($"[UPDATE] {update.Id}: {update.Y}");
+                _log.Trace($"Update {update.Id}: Y={update.Y}, X={update.X}");
 
                 if (_config.Mappings.ContainsKey(update.Id)) {
                     var mapping = _config.Mappings[update.Id];
-                    mapping.Execute(update);
+                    try {
+                        mapping.Execute(update);
+                    } catch (Exception e) {
+                        _log.Error($"An exception was thrown executing {mapping.GetType().FullName} with id {update.Id}.", e, null);
+                        //swallow the exception because we don't want the server to crash just because a mapping failed.
+                    }
                 } else {
                     _log.Warn($"No mapping found for id {update.Id}.");
                 }
