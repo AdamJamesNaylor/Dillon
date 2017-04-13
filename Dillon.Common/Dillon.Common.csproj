@@ -45,6 +45,7 @@
     <Compile Include="ILoggerAdapter.cs" />
     <Compile Include="IMouseSimulator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UnableToCreateDirectoryException.cs" />
     <Compile Include="Update.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,9 @@
 namespace Dillon.Server {
     using System;
     using System.Drawing;
-    using System.Reflection;
+    using System.IO;
+    using System.Net;
+    using System.Security.Policy;
     using System.Web.Http;
     using System.Windows.Forms;
     using Autofac;
@@ -17,8 +19,9 @@ namespace Dillon.Server {
     public class AppContext
         : ApplicationContext {
 
-        public AppContext(IConfiguration config) {
-            _config = config;
+        public AppContext(IContainer container) {
+            _container = container;
+            _config = _container.Resolve<IConfiguration>();
             Application.ApplicationExit += OnApplicationExit;
             _log = LogManager.GetCurrentClassLogger();
             Initialise();
@@ -60,12 +63,16 @@ namespace Dillon.Server {
         }
 
         private void StartServer() {
-            try {
-                string url = $"{_config.Scheme}://{_config.Domain}:{_config.Port}";
+            string url = $"{_config.Scheme}://{_config.Domain}:{_config.Port}";
+            try
+            {
                 _log.Debug($"Starting webserver listening on {url}");
                 WebApp.Start(url, Startup);
-            } catch (Exception e) {
-                throw new Exception($"Unable to start web server. {e.InnerMostException().Message}");
+            } catch (Exception e) when (e.InnerException is HttpListenerException) {
+                throw new Exception($"Unable to start web server. Check you are running the application as administrator and no other software is listening on {url}.");
+            }
+            catch (Exception e) {
+                throw new Exception($"Unable to start web server. {e.GetType().FullName}: {e.Message}"); //instead of using inner exception consider handling the exception lower and surfacing correct details
             }
         }
 
@@ -74,21 +81,23 @@ namespace Dillon.Server {
 
             config.MapHttpAttributeRoutes();
 
-            var builder = new ContainerBuilder();
+            config.DependencyResolver = new AutofacWebApiDependencyResolver(_container);
 
-            builder.RegisterApiControllers(Assembly.GetExecutingAssembly());
-
-            builder.RegisterInstance(_config).As<IConfiguration>();
-
-            var container = builder.Build();
-            config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
-
-            appBuilder.UseAutofacMiddleware(container);
+            appBuilder.UseAutofacMiddleware(_container);
             appBuilder.UseAutofacWebApi(config);
             appBuilder.UseWebApi(config);
-            var fileSystem = new PhysicalFileSystem(_config.UIFolder);
+            RegisterFileServer(appBuilder);
+        }
 
-            var options = new FileServerOptions { FileSystem = fileSystem };
+        private void RegisterFileServer(IAppBuilder appBuilder) {
+            try {
+                Directory.CreateDirectory(_config.UIFolder);
+            } catch (Exception e) {
+                throw new UnableToCreateDirectoryException($"Unable to create UI folder at {_config.UIFolder}. See inner exception for details.", e);
+            }
+
+            var fileSystem = new PhysicalFileSystem(_config.UIFolder);
+            var options = new FileServerOptions {FileSystem = fileSystem};
 
             appBuilder.UseFileServer(options);
         }
@@ -117,6 +126,7 @@ namespace Dillon.Server {
         private ContextMenuStrip _trayIconContextMenu;
         private ToolStripMenuItem _closeMenuItem;
         private Logger _log;
+        private readonly IContainer _container;
         private readonly IConfiguration _config;
     }
 }
