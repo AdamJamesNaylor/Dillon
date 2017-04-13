@@ -149,6 +149,11 @@
     <Content Include="UI\Akira\styles.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="UI\Sith\Index.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="UI\Sith\script.js" />
+    <Content Include="UI\Sith\styles.css" />
     <Content Include="UI\Tetsuo\Index.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
