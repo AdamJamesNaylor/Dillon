@@ -1,0 +1,73 @@
+﻿
+@{
+    ViewBag.Title = "Dillon";
+
+    var productName = "Dillon";
+    var latestVersion = "0.1.0";
+}
+
+<section>
+    <h2>About</h2>
+    <p>Dillon is a lightweight application that allows users to raise events (such as keypresses and joystick movement) on a host machine by interacting with themed graphical user interfaces displayed on different devices.</p>
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/GhvTY0fr9bM" frameborder="0" allowfullscreen></iframe>
+    <h3>Pre-alpha</h3>
+    <p>Dillon is currently <a href="https://en.wikipedia.org/wiki/Software_release_life_cycle#Pre-alpha">pre-alpha</a> software so it has had no formal testing.</p>
+</section>
+
+
+
+<section>
+    <h2>Download</h2>
+    <table>
+        <thead>
+            <tr class="clear"><td colspan="6"><h3>Latest</h3></td></tr>
+            <tr>
+                <th></th>
+                <th>Version</th>
+                <th>Platform</th>
+                <th>Release notes</th>
+                <th>Download</th>
+                <th>SHA</th>
+            </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="centered"><a href="#" title="Download @productName version @latestVersion"><img src="~/Images/zipfile.png" /></a></td>
+            <td class="centered">v@(latestVersion)</td>
+            <td>Win x86/x64</td>
+            <td class="centered"><a href="#" title="View the release notes for version @latestVersion of @productName"><img src="~/Images/textfile.png"/></a></td>
+            <td class="download centered"><a href="#" title="Download @productName version @latestVersion">&#9660;</a></td>
+            <td></td>
+        </tr>
+        <tr class="clear"><td colspan="6"><h3>Archive</h3></td></tr>
+        <tr>
+            <td class="centered"><a href="#" title="Download @productName version 0.0.1"><img src="~/Images/zipfile.png" /></a></td>
+            <td class="centered">v0.0.1</td>
+            <td>Win x86/x64</td>
+            <td class="centered"><a href="#" title="View the release notes for version 0.0.1 of @productName"><img src="~/Images/textfile.png" /></a></td>
+            <td class="download centered"><a href="#" title="Download @productName version 0.0.1">&#9660;</a></td>
+            <td></td>
+        </tr>
+        </tbody>
+    </table>
+
+</section>
+<section>
+    <h2>Guide</h2>
+    <p>Once downloaded, simply run the executable as an administrator (as the host application needs to be able to listen for incoming web requests)</p>
+</section>
+
+<section>
+    <h2>How does it work</h2>
+    <p>host application running in background on gaming machine</p>
+    <p>acts as a web host</p>
+    <p>devices on same network can access the host app</p>
+    <p>not accessible out side of network unless you open ports</p>
+    <p>UIs are simply html so can be customised</p>
+    <p>each control on the ui can be bound to different actions and buttons</p>
+</section>
+
+<section>
+    <h2>User interfaces</h2>
+    <p>Example <a href="#">link</a> here.</p>
+</section>

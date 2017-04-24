@@ -1,0 +1,116 @@
+﻿
+#themes {
+/*
+    https://color.adobe.com/Finland-2-color-theme-9490469/edit/?copy=true
+*/
+    color: #1F3622;
+    color: #3D5D4C;
+    color: #53755F;
+    color: #DDFDEC;
+    color: #6F9C89;
+/*
+    https://color.adobe.com/Palette-de-couleurs-1-color-theme-9491250/edit/?copy=true
+*/
+    color: #6FAF93;
+    color: #4BE2A1;
+    color: #5B7C5B;
+    color: #894289;
+    color: #9E6FAF;
+/*
+    https://color.adobe.com/Fire-Watch-Part-1-color-theme-9427256/edit/?copy=true
+*/
+    color: #2D112B;
+    color: #540431;
+    color: #7F0632;
+    color: #CA293E;
+    color: #FF583D;
+/*
+    https://color.adobe.com/Color-Theme-208-color-theme-9405626/edit/?copy=true
+*/
+    color: #008692;
+    color: #52BCC2;
+    color: #C4E8E9;
+    color: #FF8B8B;
+    color: #F25E5E;
+}
+
+body {
+    font-family: Arial, "Helvetica Neue, Helvetica, sans-serif";
+    margin: 0;
+}
+
+header, footer {
+    background-color: #008692;
+    color: white;
+    padding: 50px 0;
+}
+h2 {
+    background: #52BCC2;
+    color: white;
+    padding: 5px 20px;
+    font-size: 2em;
+}
+h3 {
+    color: #008692;
+    font-size: 1.5em;
+    padding: 0 20px;
+}
+
+a {
+    color: #F25E5E;
+}
+
+a:hover { text-decoration: none;}
+
+section {
+    margin: 0 auto;
+    width: 1000px;
+}
+section > p {
+    padding: 0 20px;
+}
+
+section > img, section > iframe {
+    display: block;
+    margin: 0 auto;
+}
+
+table {
+    width: 600px;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+td, th {
+    border: 1px solid #C4E8E9;
+    padding: 5px;
+    width: 17%;
+}
+
+tr.clear > td {
+    border: none;
+}
+
+td.download {
+    font-size: 25px;
+}
+
+.phase {
+    background-color: #F25E5E;
+    display: inline-block;
+    vertical-align: top;
+    padding: 2px 4px 0 5px;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 700;
+    text-transform: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.centered {
+    text-align: center;
+}
