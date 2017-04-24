@@ -21,6 +21,7 @@ function updateElement(element, update) {
     //todo check element type and class for orientation, assume vertical UL for now
     switch (element.tagName) {
         case "BUTTON":
+            updateDescreteRange(element, update);
             break;
         case "UL":
             updateVerticalUL(element, update);
@@ -28,37 +29,34 @@ function updateElement(element, update) {
     }
 }
 
+function updateDescreteRange(element, update) {
+    element = $(element);
+    var isUp = element.text() === "+";
+    var div = element.parent();
+    var children = div.children();
+    var val = parseInt(children[2].innerText);
+    if (isUp)
+        $(children[2]).text(val + 1);
+    else
+        $(children[2]).text(val - 1);
+}
+
 function updateVerticalUL(ul, update) {
     ul = $(ul);
     var height = ul.outerHeight();
     var percent = Math.floor((update.y / height) * 100);
-    var tenth = Math.ceil(percent / 10);
 
-    var items = ul.children("li");
-
-    for (var i = 0; i < 10; ++i) {
-        $(items[i]).removeClass("disabled active");
+    var marker = ul.children(".range-marker");
+    if (marker.length <= 0) {
+        marker = $("<div></div>");
+        marker.addClass("range-marker");
+        ul.append(marker);
     }
-    var i = 0;
-    for (; i < 10 - tenth; ++i) {
-        $(items[i]).addClass("disabled");
-    }
-    $(items[i]).addClass("active");
-    var id = ul.data("id");
-    $("h3[data-id='" + id + "'").text(percent.pad(3));
-}
-
-$.fn.random = function () {
-    var ret = $();
-
-    if (this.length > 0)
-        ret = ret.add(this[Math.floor((Math.random() * this.length))]);
-
-    return ret;
-};
-
-function flashGrids() {
-    $("table.grid td").random().toggleClass("on");
+    var top = ul.offset().top;
+    var y = (top + height) - (update.y + 23);
+    marker.css("top", y.clamp(top, top + height - 46));
+    marker.css("left", ul.offset().left);
+    marker.text(percent.pad(3));
 }
 
 function respondToEvent(element, x, y) {
@@ -199,8 +197,6 @@ function initEvents() {
 }
 
 $(document).ready(function () {
-    var gridTimer = setInterval(flashGrids, 3000);
-
     initEvents();
     var uls = document.getElementsByTagName("ul");
     for (var i = 0; i < uls.length; ++i) {

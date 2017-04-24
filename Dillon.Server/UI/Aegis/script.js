@@ -143,9 +143,11 @@ function initEvents() {
     }
 
     document.getElementsByTagName("body")[0].addEventListener("mouseup", handleMouseUp, false);
+    document.addEventListener("mouseout", handleMouseOut, false);
 }
 
 function handleStart(e) {
+    e = e ? e : window.event;
     console.groupCollapsed("touch event");
     e.preventDefault();
     var touches = e.changedTouches;
@@ -157,6 +159,7 @@ function handleStart(e) {
 }
 
 function handleMove(e) {
+    e = e ? e : window.event;
     e.preventDefault();
     var touches = e.changedTouches;
 
@@ -175,6 +178,7 @@ function handleMove(e) {
 }
 
 function handleCancel(e) {
+    e = e ? e : window.event;
     e.preventDefault();
     var touches = e.changedTouches;
 
@@ -185,6 +189,7 @@ function handleCancel(e) {
 }
 
 function handleEnd(e) {
+    e = e ? e : window.event;
     e.preventDefault();
     var touches = e.changedTouches;
 
@@ -208,20 +213,35 @@ function handleEnd(e) {
 var down = false;
 
 function handleMouseDown(e) {
+    e = e ? e : window.event;
     console.groupCollapsed("mousedown on element " + this + " with id: " + $(this).data("id"));
     down = true;
     respondToEvent(this, e.pageX, e.pageY);
 }
 
 function handleMouseMove(e) {
+    e = e ? e : window.event;
     if (!down) return;
     respondToEvent(this, e.pageX, e.pageY);
 }
 
 function handleMouseUp(e) {
+    e = e ? e : window.event;
+    if (down) {
+        console.log("mouse up on " + this);
+        console.groupEnd();
+    }
     down = false;
-    console.log("mouse up");
-    console.groupEnd();
+}
+
+function handleMouseOut(e) {
+    e = e ? e : window.event;
+    var from = e.relatedTarget || e.toElement;
+    if (down && (!from || from.nodeName == "Window")) {
+        down = false;
+        console.log("mouse out on " + this);
+        console.groupEnd();
+    }
 }
 
 function printDiagnostics() {
