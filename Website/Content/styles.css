@@ -72,7 +72,8 @@ section > p {
 
 section > img, section > iframe {
     display: block;
-    margin: 0 auto;
+    margin: 10px auto;
+
 }
 
 table {
