@@ -1,0 +1,70 @@
+﻿
+#themes {
+/*
+    https://color.adobe.com/Finland-2-color-theme-9490469/edit/?copy=true
+*/
+    color: #1F3622;
+    color: #3D5D4C;
+    color: #53755F;
+    color: #DDFDEC;
+    color: #6F9C89;
+/*
+    https://color.adobe.com/Palette-de-couleurs-1-color-theme-9491250/edit/?copy=true
+*/
+    color: #6FAF93;
+    color: #4BE2A1;
+    color: #5B7C5B;
+    color: #894289;
+    color: #9E6FAF;
+}
+
+body {
+    font-family: Arial, "Helvetica Neue, Helvetica, sans-serif";
+    margin: 0;
+}
+
+header, footer {
+    background-color: #5B7C5B;
+    color: white;
+    padding: 10px 0;
+}
+h2 {
+    background: #894289;
+    color: white;
+    padding: 5px 20px;
+}
+
+a {
+    color: #894289;
+}
+
+a:hover { text-decoration: none;}
+
+section {
+    margin: 0 auto;
+    width: 1000px;
+}
+section > p {
+    padding: 0 20px;
+}
+
+section > img {
+    display: block;
+    margin: 0 auto;
+}
+
+table {
+    border: 2px solid #6FAF93;
+    width: 500px;
+    margin: 0 auto;
+    border-collapse: collapse;
+}
+
+td {
+    border: 1px solid #6FAF93;
+}
+
+td.download {
+    text-align: center;
+    font-size: 25px;
+}
