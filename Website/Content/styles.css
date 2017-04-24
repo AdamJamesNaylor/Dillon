@@ -16,6 +16,22 @@
     color: #5B7C5B;
     color: #894289;
     color: #9E6FAF;
+/*
+    https://color.adobe.com/Fire-Watch-Part-1-color-theme-9427256/edit/?copy=true
+*/
+    color: #2D112B;
+    color: #540431;
+    color: #7F0632;
+    color: #CA293E;
+    color: #FF583D;
+/*
+    https://color.adobe.com/Color-Theme-208-color-theme-9405626/edit/?copy=true
+*/
+    color: #008692;
+    color: #52BCC2;
+    color: #C4E8E9;
+    color: #FF8B8B;
+    color: #F25E5E;
 }
 
 body {
@@ -24,18 +40,24 @@ body {
 }
 
 header, footer {
-    background-color: #5B7C5B;
+    background-color: #008692;
     color: white;
-    padding: 10px 0;
+    padding: 50px 0;
 }
 h2 {
-    background: #894289;
+    background: #52BCC2;
     color: white;
     padding: 5px 20px;
+    font-size: 2em;
+}
+h3 {
+    color: #008692;
+    font-size: 1.5em;
+    padding: 0 20px;
 }
 
 a {
-    color: #894289;
+    color: #F25E5E;
 }
 
 a:hover { text-decoration: none;}
@@ -48,23 +70,47 @@ section > p {
     padding: 0 20px;
 }
 
-section > img {
+section > img, section > iframe {
     display: block;
     margin: 0 auto;
 }
 
 table {
-    border: 2px solid #6FAF93;
-    width: 500px;
+    width: 600px;
     margin: 0 auto;
     border-collapse: collapse;
 }
 
-td {
-    border: 1px solid #6FAF93;
+td, th {
+    border: 1px solid #C4E8E9;
+    padding: 5px;
+    width: 17%;
+}
+
+tr.clear > td {
+    border: none;
 }
 
 td.download {
-    text-align: center;
     font-size: 25px;
+}
+
+.phase {
+    background-color: #F25E5E;
+    display: inline-block;
+    vertical-align: top;
+    padding: 2px 4px 0 5px;
+    font-family: "nta", Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.25;
+    font-weight: 700;
+    text-transform: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    color: #fff;
+}
+
+.centered {
+    text-align: center;
 }

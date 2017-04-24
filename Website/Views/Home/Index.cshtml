@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Dillon";
 
     var productName = "Dillon";
     var latestVersion = "0.1.0";
@@ -9,31 +9,45 @@
 <section>
     <h2>About</h2>
     <p>Dillon is a lightweight application that allows users to raise events (such as keypresses and joystick movement) on a host machine by interacting with themed graphical user interfaces displayed on different devices.</p>
-    <img src="https://i.ytimg.com/vi_webp/GhvTY0fr9bM/sddefault.webp" />
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/GhvTY0fr9bM" frameborder="0" allowfullscreen></iframe>
+    <h3>Pre-alpha</h3>
+    <p>Dillon is currently <a href="https://en.wikipedia.org/wiki/Software_release_life_cycle#Pre-alpha">pre-alpha</a> software so it has had no formal testing.</p>
 </section>
 
 
 
 <section>
     <h2>Download</h2>
-    <h3>Latest</h3>
     <table>
         <thead>
-        <tr>
-            <th>Version</th>
-            <th>Platform</th>
-            <th>Download</th>
-            <th>SHA</th>
-        </tr>
+            <tr class="clear"><td colspan="6"><h3>Latest</h3></td></tr>
+            <tr>
+                <th></th>
+                <th>Version</th>
+                <th>Platform</th>
+                <th>Release notes</th>
+                <th>Download</th>
+                <th>SHA</th>
+            </tr>
         </thead>
         <tbody>
-        <tr><td>v@(latestVersion)</td><td>Win x86/x64</td><td class="download"><a href="#" title="Download @productName version @latestVersion">&#9660;</a></td><td></td></tr>
-        </tbody>
-    </table>
-    <h3>Archive</h3>
-    <table>
-        <tbody>
-            <tr><td>v0.0.1</td><td>Win x86/x64</td><td class="download"><a href="#" title="Download @productName version 0.0.1">&#9660;</a></td><td></td></tr>
+        <tr>
+            <td class="centered"><a href="#" title="Download @productName version @latestVersion"><img src="~/Images/zipfile.png" /></a></td>
+            <td class="centered">v@(latestVersion)</td>
+            <td>Win x86/x64</td>
+            <td class="centered"><a href="#" title="View the release notes for version @latestVersion of @productName"><img src="~/Images/textfile.png"/></a></td>
+            <td class="download centered"><a href="#" title="Download @productName version @latestVersion">&#9660;</a></td>
+            <td></td>
+        </tr>
+        <tr class="clear"><td colspan="6"><h3>Archive</h3></td></tr>
+        <tr>
+            <td class="centered"><a href="#" title="Download @productName version 0.0.1"><img src="~/Images/zipfile.png" /></a></td>
+            <td class="centered">v0.0.1</td>
+            <td>Win x86/x64</td>
+            <td class="centered"><a href="#" title="View the release notes for version 0.0.1 of @productName"><img src="~/Images/textfile.png" /></a></td>
+            <td class="download centered"><a href="#" title="Download @productName version 0.0.1">&#9660;</a></td>
+            <td></td>
+        </tr>
         </tbody>
     </table>
 
