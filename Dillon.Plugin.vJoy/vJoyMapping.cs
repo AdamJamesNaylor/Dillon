@@ -1,10 +1,12 @@
 ﻿namespace Dillon.Plugin.vJoy {
     using System.Threading;
     using Common;
-    using PluginAPI.V1;
     using vJoyInterfaceWrap;
 
     public abstract class vJoyMapping {
+
+        public static string Name => "joy";
+
         protected vJoyMapping(vJoy joy, uint deviceId, ILoggerAdapter logger) {
             Joy = joy;
             DeviceId = deviceId;

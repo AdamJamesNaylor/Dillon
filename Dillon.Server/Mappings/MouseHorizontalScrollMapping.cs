@@ -1,9 +1,11 @@
 ﻿namespace Dillon.Server.Mappings {
     using Common;
-    using PluginAPI.V1;
 
-    public class MouseHorizontalScrollMapping : IMapping
-    {
+    public class MouseHorizontalScrollMapping
+        : IMapping {
+
+        public static string Name => "hscroll";
+
         public MouseHorizontalScrollMapping(IMouseSimulatorAdapter mouseSimulator) {
             _mouseSimulator = mouseSimulator;
         }

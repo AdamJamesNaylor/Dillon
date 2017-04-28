@@ -1,10 +1,11 @@
 namespace Dillon.Server.Mappings {
     using Common;
-    using Controllers;
-    using PluginAPI.V1;
 
     public class TextEntryMapping
         : IMapping {
+
+        public static string Name => "textentry";
+
         public TextEntryMapping(IKeyboardSimulatorAdapter keyboard, string text) {
             _keyboard = keyboard;
             _text = text;
