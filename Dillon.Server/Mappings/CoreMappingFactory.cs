@@ -13,6 +13,12 @@
             _mouseSimulator = mouseSimulator;
         }
 
+        public IEnumerable<string> SupportedMappings => new List<string> {KeyCodeMapping.Name, TextEntryMapping.Name, KeyCodesMapping.Name, MouseVerticalScrollMapping.Name, MouseHorizontalScrollMapping.Name};
+
+        public void Initiate() {
+            
+        }
+
         public void RegisterDependancy<T>(T dependancy) {
             
         }

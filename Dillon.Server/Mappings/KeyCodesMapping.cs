@@ -1,10 +1,11 @@
 ﻿namespace Dillon.Server.Mappings {
     using Common;
-    using Controllers;
-    using PluginAPI.V1;
 
     public class KeyCodesMapping
         : IMapping {
+
+        public static string Name => "keycodes";
+
         public KeyCodesMapping(IKeyboardSimulatorAdapter keyboard, VirtualKeyCode[] keyCodes) {
             _keyboard = keyboard;
             _keyCodes = keyCodes;

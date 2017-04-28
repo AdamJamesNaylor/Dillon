@@ -2,13 +2,14 @@ namespace Dillon.Server.Configuration {
     using System;
     using System.Collections.Generic;
     using System.IO;
+    using System.Linq;
+    using System.Reflection;
     using System.Windows.Forms;
     using Common;
     using Diagnostics;
     using JsonConfig;
     using Mappings;
     using NLog;
-    using Plugin.vJoy;
     using PluginAPI.V1;
 
     public interface IConfigurator {
@@ -20,6 +21,8 @@ namespace Dillon.Server.Configuration {
 
         public Configurator(ICoreMappingFactory coreMappingFactory) {
             _coreMappingFactory = coreMappingFactory;
+
+            AppDomain.CurrentDomain.AssemblyResolve += LoadFromSameFolder;
         }
 
         public Configuration Configure(string[] args) {
@@ -82,7 +85,6 @@ namespace Dillon.Server.Configuration {
             //todo add a plugin mapping factory that gives each mapping a chance to be created with the correct dependancies.
             //todo temp. will be replaced with proper plugin loading code
             var logAdapter = new LoggerAdapter(log);
-            var joyFactory = new vJoyMappingFactory(logAdapter, config);
 
             foreach (var mapping in mappings) {
                 var map = mapping.map;
@@ -114,11 +116,43 @@ namespace Dillon.Server.Configuration {
                     if (type is NullExceptionPreventer) {
                         throw new Exception($"Mapping with Id {mapping.Id} has an untyped map. All mappings with map properties must specify a type, check the config file.");
                     }
+
                     string typeString = type.ToString();
-                    switch (typeString) {
-                        case "joy":
-                            config.Mappings.Add(mapping.id, joyFactory.Create("joy", map));
-                            break;
+                    if (!Directory.Exists("plugins")) {
+                        log.Warn($"Unable to load mapping with type {typeString} because the plugin directory does not exist.");
+                        continue;
+                    }
+
+                    var fileEntries = Directory.GetFiles("plugins");
+                    foreach (var file in fileEntries) {
+                        Assembly dll = null;
+                        using (var stream = File.OpenRead(file)) {
+                            var assemblyData = new byte[stream.Length];
+                            stream.Read(assemblyData, 0, assemblyData.Length);
+                            try {
+                                dll = Assembly.Load(assemblyData);
+                            }
+                            catch {
+                                //will replace this with http://stackoverflow.com/a/14184863/17540
+                                continue;
+                            }
+                        }
+                        var mappingFactories = dll.GetTypes()
+                            .Where(t => t.IsClass && t.GetInterfaces().Contains(typeof (IMappingFactory)));
+                        if (!mappingFactories.Any()) {
+                            continue;
+                        }
+
+                        foreach (var factory in mappingFactories) {
+                            var instance = (IMappingFactory)Activator.CreateInstance(factory);
+                            instance.RegisterDependancy(logAdapter);
+                            instance.RegisterDependancy(config);
+                            instance.Initiate();
+                            if (!instance.SupportedMappings.Contains(typeString))
+                                continue;
+                            var pluginMapping = instance.Create("joy", map);
+                            config.Mappings.Add(mapping.id, pluginMapping);
+                        }
                     }
                     //todo check for nullmapping and log warning if no factories have handled it
                 }
@@ -126,6 +160,16 @@ namespace Dillon.Server.Configuration {
         }
 
         private readonly ICoreMappingFactory _coreMappingFactory;
+
+        private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args)
+        {
+            string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            folderPath = Path.Combine(folderPath, "plugins");
+            string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
+            if (!File.Exists(assemblyPath)) return null;
+            Assembly assembly = Assembly.LoadFrom(assemblyPath);
+            return assembly;
+        }
     }
 
     

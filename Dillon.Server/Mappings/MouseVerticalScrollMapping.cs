@@ -1,9 +1,10 @@
 ﻿namespace Dillon.Server.Mappings {
     using Common;
-    using PluginAPI.V1;
 
     public class MouseVerticalScrollMapping
         : IMapping {
+
+        public static string Name => "vscroll";
 
         public MouseVerticalScrollMapping(IMouseSimulatorAdapter mouseSimulator) {
             _mouseSimulator = mouseSimulator;

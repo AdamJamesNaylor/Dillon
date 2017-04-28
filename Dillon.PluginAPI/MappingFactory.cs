@@ -7,7 +7,11 @@
     public class PlaySoundEffectMappingFactory
         : IMappingFactory {
 
-        public IEnumerable<string> SupportedMappings = new List<string> {PlaySoundEffectMapping.Name};
+        public IEnumerable<string> SupportedMappings => new List<string> {PlaySoundEffectMapping.Name};
+
+        public void Initiate() {
+            
+        }
 
         public void RegisterDependancy<T>(T dependancy) {
             var simulator = dependancy as IKeyboardSimulatorAdapter;
@@ -31,6 +35,8 @@
     }
 
     public interface IMappingFactory {
+        IEnumerable<string> SupportedMappings { get; }
+        void Initiate();
         void RegisterDependancy<T>(T dependancy);
         IMapping Create(string name, IDictionary<string, object> map);
     }

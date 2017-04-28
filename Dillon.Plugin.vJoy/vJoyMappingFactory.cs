@@ -10,9 +10,9 @@ namespace Dillon.Plugin.vJoy {
     public class vJoyMappingFactory
         : IMappingFactory {
 
-        public vJoyMappingFactory(ILoggerAdapter logger, IConfiguration config) {
-            _logger = logger;
-            _config = config;
+        public IEnumerable<string> SupportedMappings => new List<string> {vJoyMapping.Name};
+
+        public void Initiate() {
 
             _logger.Debug("Attempting to initialise virtual joystick.");
 
@@ -103,6 +103,13 @@ namespace Dillon.Plugin.vJoy {
         }
 
         public void RegisterDependancy<T>(T dependancy) {
+            var config = dependancy as IConfiguration;
+            if (config != null)
+                _config = config;
+
+            var logger = dependancy as ILoggerAdapter;
+            if (logger != null)
+                _logger = logger;
         }
 
         public IMapping Create(string name, IDictionary<string, object> map) {
@@ -144,8 +151,8 @@ namespace Dillon.Plugin.vJoy {
 
         private readonly vJoy _joy = new vJoy();
         private uint _vDeviceId = NoDeviceFound;
-        private readonly ILoggerAdapter _logger;
-        private readonly IConfiguration _config;
+        private ILoggerAdapter _logger;
+        private IConfiguration _config;
 
         private const uint MinDeviceId = 1;
         private const uint MaxDeviceId = 16;

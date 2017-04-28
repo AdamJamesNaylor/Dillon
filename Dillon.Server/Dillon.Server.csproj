@@ -243,16 +243,14 @@
       <Project>{F63986A2-503C-4117-9034-758C13CC100B}</Project>
       <Name>Dillon.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Dillon.Plugin.vJoy\Dillon.Plugin.vJoy.csproj">
-      <Project>{aad0212c-dfc9-4204-b34f-4cb56b2e68ff}</Project>
-      <Name>Dillon.Plugin.vJoy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Dillon.PluginAPI\Dillon.PluginAPI.csproj">
       <Project>{03b89fcb-2906-42dd-be59-f6d1c69d2d52}</Project>
       <Name>Dillon.PluginAPI</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Plugins\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
