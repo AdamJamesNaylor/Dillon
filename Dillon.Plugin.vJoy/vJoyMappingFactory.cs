@@ -160,5 +160,4 @@ namespace Dillon.Plugin.vJoy {
 
         private bool _deviceIsAcquired = false;
     }
-
-    }
+}

@@ -123,6 +123,7 @@
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="Configuration\Configurator.cs" />
     <Compile Include="Configuration\DependancyGraph.cs" />
+    <Compile Include="Configuration\PluginLoader.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Diagnostics\LoggerAdapter.cs" />
     <Compile Include="Input\KeyboardSimulatorAdapter.cs" />

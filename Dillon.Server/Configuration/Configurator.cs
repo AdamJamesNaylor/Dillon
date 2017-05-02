@@ -2,15 +2,12 @@ namespace Dillon.Server.Configuration {
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Reflection;
     using System.Windows.Forms;
     using Common;
     using Diagnostics;
     using JsonConfig;
     using Mappings;
     using NLog;
-    using PluginAPI.V1;
 
     public interface IConfigurator {
         Configuration Configure(string[] args);
@@ -19,10 +16,9 @@ namespace Dillon.Server.Configuration {
     public class Configurator
         : IConfigurator {
 
-        public Configurator(ICoreMappingFactory coreMappingFactory) {
+        public Configurator(ICoreMappingFactory coreMappingFactory, IPluginLoader pluginLoader) {
             _coreMappingFactory = coreMappingFactory;
-
-            AppDomain.CurrentDomain.AssemblyResolve += LoadFromSameFolder;
+            _pluginLoader = pluginLoader;
         }
 
         public Configuration Configure(string[] args) {
@@ -62,6 +58,7 @@ namespace Dillon.Server.Configuration {
 
         private void Parse(Configuration config) {
             var log = LogManager.GetCurrentClassLogger();
+            _pluginLoader.Config = config;
 
             var uiFolder = Config.Global.uiFolder;
             if (!(uiFolder is NullExceptionPreventer)) {
@@ -111,66 +108,17 @@ namespace Dillon.Server.Configuration {
                             config.Mappings.Add(mapping.id, _coreMappingFactory.Create(coreType, mapping));
                     }
                 }
-                else { //plugin mapping
-                    var type = map.type;
-                    if (type is NullExceptionPreventer) {
-                        throw new Exception($"Mapping with Id {mapping.Id} has an untyped map. All mappings with map properties must specify a type, check the config file.");
-                    }
+                else {
+                    var pluginMapping = _pluginLoader.Create(mapping);
+                    if (pluginMapping != null)
+                        config.Mappings.Add(mapping.id, pluginMapping);
 
-                    string typeString = type.ToString();
-                    if (!Directory.Exists("plugins")) {
-                        log.Warn($"Unable to load mapping with type {typeString} because the plugin directory does not exist.");
-                        continue;
-                    }
-
-                    var fileEntries = Directory.GetFiles("plugins");
-                    foreach (var file in fileEntries) {
-                        Assembly dll = null;
-                        using (var stream = File.OpenRead(file)) {
-                            var assemblyData = new byte[stream.Length];
-                            stream.Read(assemblyData, 0, assemblyData.Length);
-                            try {
-                                dll = Assembly.Load(assemblyData);
-                            }
-                            catch {
-                                //will replace this with http://stackoverflow.com/a/14184863/17540
-                                continue;
-                            }
-                        }
-                        var mappingFactories = dll.GetTypes()
-                            .Where(t => t.IsClass && t.GetInterfaces().Contains(typeof (IMappingFactory)));
-                        if (!mappingFactories.Any()) {
-                            continue;
-                        }
-
-                        foreach (var factory in mappingFactories) {
-                            var instance = (IMappingFactory)Activator.CreateInstance(factory);
-                            instance.RegisterDependancy(logAdapter);
-                            instance.RegisterDependancy(config);
-                            instance.Initiate();
-                            if (!instance.SupportedMappings.Contains(typeString))
-                                continue;
-                            var pluginMapping = instance.Create("joy", map);
-                            config.Mappings.Add(mapping.id, pluginMapping);
-                        }
-                    }
                     //todo check for nullmapping and log warning if no factories have handled it
                 }
             }
         }
 
         private readonly ICoreMappingFactory _coreMappingFactory;
-
-        private static Assembly LoadFromSameFolder(object sender, ResolveEventArgs args)
-        {
-            string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            folderPath = Path.Combine(folderPath, "plugins");
-            string assemblyPath = Path.Combine(folderPath, new AssemblyName(args.Name).Name + ".dll");
-            if (!File.Exists(assemblyPath)) return null;
-            Assembly assembly = Assembly.LoadFrom(assemblyPath);
-            return assembly;
-        }
+        private readonly IPluginLoader _pluginLoader;
     }
-
-    
 }
