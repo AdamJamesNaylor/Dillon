@@ -15,6 +15,7 @@ namespace Dillon.Server {
     using Microsoft.Owin.StaticFiles;
     using NLog;
     using Owin;
+    using OwinMiddleware;
 
 
     public class AppContext
@@ -87,6 +88,7 @@ namespace Dillon.Server {
             appBuilder.UseAutofacMiddleware(_container);
             appBuilder.UseAutofacWebApi(config);
             appBuilder.UseWebApi(config);
+            appBuilder.Use<NotFoundMiddleware>(appBuilder);
             RegisterFileServer(appBuilder);
         }
 

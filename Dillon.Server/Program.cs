@@ -2,6 +2,9 @@
 namespace Dillon.Server {
     using System;
     using System.Collections;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using System.Reflection;
     using System.Windows.Forms;
     using NLog;
@@ -14,6 +17,9 @@ namespace Dillon.Server {
         [STAThread]
         private static int Main(string[] args) {
             try {
+
+                //if (Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location)).Any())
+                //    return 0;
 
                 _log = LogManager.GetCurrentClassLogger();
                 _log.Info($"======== Dillon.Server startup v{Assembly.GetExecutingAssembly().GetName().Version}");
